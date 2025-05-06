@@ -6,8 +6,6 @@ import Services.EventService;
 import Services.FinanceService;
 import Services.TicketService;
 import Services.VenueService;
-
-
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
