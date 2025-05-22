@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="Ui.MainMenuGui">
-  <grid id="27dc6" binding="PanelPrincipalMainMenu" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="Ui.ManageAccessControlGui">
+  <grid id="27dc6" binding="PnaelPrincipalAccessControl" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="25" y="31" width="1226" height="525"/>
+      <xy x="20" y="20" width="1472" height="591"/>
     </constraints>
     <properties>
       <background color="-15591660"/>
     </properties>
     <border type="none"/>
     <children>
-      <grid id="ee166" binding="JpanelTituloPrincipal" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="afa21" binding="JpanelTituloPrincipal" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <background color="-15591660"/>
         </properties>
         <border type="none"/>
         <children>
-          <component id="76688" class="javax.swing.JLabel" binding="eventMasterProMenuLabel">
+          <component id="f1814" class="javax.swing.JLabel" binding="eventMasterProMenuLabel">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -30,14 +30,14 @@
               <text value="Event Master Pro "/>
             </properties>
           </component>
-          <vspacer id="dade8">
+          <vspacer id="a9b4b">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
           </vspacer>
         </children>
       </grid>
-      <grid id="e815d" binding="JPanelMenu" layout-manager="GridLayoutManager" row-count="10" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="c6592" binding="JPanelMenuEvent" layout-manager="GridLayoutManager" row-count="8" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="2" indent="0" use-parent-layout="false">
@@ -49,9 +49,9 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="35fd0" class="javax.swing.JButton" binding="exitButton" default-binding="true">
+          <component id="3dc79" class="javax.swing.JButton" binding="exitButton" default-binding="true">
             <constraints>
-              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <background color="-14829228"/>
@@ -60,29 +60,7 @@
               <text value="Exit"/>
             </properties>
           </component>
-          <component id="49d6c" class="javax.swing.JButton" binding="manageAccessControlButton" default-binding="true">
-            <constraints>
-              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <background color="-14829228"/>
-              <enabled value="true"/>
-              <foreground color="-330753"/>
-              <text value="Manage Access Control"/>
-            </properties>
-          </component>
-          <component id="f9752" class="javax.swing.JButton" binding="manageTicketButton" default-binding="true">
-            <constraints>
-              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <background color="-14829228"/>
-              <enabled value="true"/>
-              <foreground color="-330753"/>
-              <text value="Manage Ticket"/>
-            </properties>
-          </component>
-          <component id="cddc" class="javax.swing.JButton" binding="manageFinancialsButton" default-binding="true">
+          <component id="1a3db" class="javax.swing.JButton" binding="backToMainMenuButton" default-binding="true">
             <constraints>
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -90,10 +68,10 @@
               <background color="-14829228"/>
               <enabled value="true"/>
               <foreground color="-330753"/>
-              <text value="Manage Financials"/>
+              <text value=" Back to Main Menu"/>
             </properties>
           </component>
-          <component id="f25ed" class="javax.swing.JButton" binding="manageVenueButton" default-binding="true">
+          <component id="ac0bb" class="javax.swing.JButton" binding="showAttendanceStatisticsButton" default-binding="true">
             <constraints>
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -101,10 +79,10 @@
               <background color="-14829228"/>
               <enabled value="true"/>
               <foreground color="-330753"/>
-              <text value="Manage Venue"/>
+              <text value="show Attendance Statistics"/>
             </properties>
           </component>
-          <component id="3c27a" class="javax.swing.JButton" binding="manageArtistButton" default-binding="true">
+          <component id="e9fba" class="javax.swing.JButton" binding="validateAttendeeEntryButton" default-binding="true">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -112,10 +90,10 @@
               <background color="-14829228"/>
               <enabled value="true"/>
               <foreground color="-330753"/>
-              <text value="Manage Artist"/>
+              <text value="validate Attendee Entry"/>
             </properties>
           </component>
-          <component id="b8150" class="javax.swing.JButton" binding="manageEventButton" default-binding="true">
+          <component id="c64d9" class="javax.swing.JButton" binding="registerNewAttendeeButton" default-binding="true">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -123,27 +101,27 @@
               <background color="-14829228"/>
               <enabled value="true"/>
               <foreground color="-330753"/>
-              <text value="Manage Event"/>
+              <text value="register New Attendee"/>
             </properties>
           </component>
-          <vspacer id="afde4">
+          <vspacer id="b3fe6">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
           </vspacer>
-          <vspacer id="120e">
+          <vspacer id="685f8">
+            <constraints>
+              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+          <vspacer id="fe1aa">
             <constraints>
               <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
           </vspacer>
-          <vspacer id="c499b">
-            <constraints>
-              <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-            </constraints>
-          </vspacer>
         </children>
       </grid>
-      <grid id="5c8bc" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="b3188" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -153,7 +131,7 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="32772" class="javax.swing.JLabel">
+          <component id="4708b" class="javax.swing.JLabel">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -162,15 +140,15 @@
               <enabled value="true"/>
               <font size="72"/>
               <foreground color="-330753"/>
-              <text value="Welcome To Event Master Pro"/>
+              <text value="Welcome To Manage Access Control"/>
             </properties>
           </component>
-          <hspacer id="fa885">
+          <hspacer id="6063b">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
-          <hspacer id="7833">
+          <hspacer id="c7a77">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>

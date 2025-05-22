@@ -9,7 +9,7 @@ import Services.VenueService;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class MainMenu {
+public class MainMenuConsol {
 
     private static final Scanner scanner = new Scanner(System.in);
     private static final VenueService venueService = new VenueService();
@@ -118,16 +118,8 @@ public class MainMenu {
     private static void manageArtists() {
         try {
             System.out.println("\n--- Manage Events ---");
-            System.out.println("1. Register Artist");
-            System.out.println("2. Modify Artist");
-            System.out.println("3. Delete Artist");
-            System.out.println("5. add Artist Participation");
-            System.out.println("4. Show information contact of Artist");
-            System.out.println("6. Show Technical Requirements");
-            System.out.println("7. Show Artist Details");
-            System.out.println("8. List Artists");
-            System.out.println("9. Back to Main Menu");
-            System.out.print("Select an option: ");
+
+
 
             int choice = scanner.nextInt();
             scanner.nextLine();
