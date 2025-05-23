@@ -12,6 +12,17 @@ public class AccessControl {
         attendeesByEvent.get(eventId).add(attendee);
     }
 
+    public void showAllAttendees(String eventId) {
+        List<Attendee> attendees = attendeesByEvent.get(eventId);
+        if (attendees == null || attendees.isEmpty()) {
+            System.out.println("No hay asistentes registrados para este evento.");
+            return;
+        }
+        for (Attendee attendee : attendees) {
+            System.out.println(attendee);
+        }
+    }
+
     public boolean validateEntry(String eventId, String attendeeId) {
         List<Attendee> attendees = attendeesByEvent.get(eventId);
         if (attendees != null) {
@@ -41,5 +52,9 @@ public class AccessControl {
             }
         }
         return count;
+    }
+    // En AccessControl.java
+    public List<Attendee> getAttendeesByEvent(String eventId) {
+        return attendeesByEvent.get(eventId);
     }
 }

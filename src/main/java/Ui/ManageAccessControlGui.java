@@ -1,5 +1,7 @@
 package Ui;
 
+import Services.AccessControlService;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,9 +16,28 @@ public class ManageAccessControlGui {
     private JButton validateAttendeeEntryButton;
     private JButton registerNewAttendeeButton;
     private JPanel PnaelPrincipalAccessControl;
+    private AccessControlService accessControlService;
+
+
 
 
     public ManageAccessControlGui() {
+        accessControlService = new AccessControlService();
+        registerNewAttendeeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String eventId = JOptionPane.showInputDialog("Enter Event ID:");
+                String attendeeId = JOptionPane.showInputDialog("Enter Attendee ID:");
+                String name = JOptionPane.showInputDialog("Enter Name:");
+                String email = JOptionPane.showInputDialog("Enter Email:");
+
+                accessControlService.registerNewAttendee(eventId, attendeeId, name, email); // 👈 se usa aquí
+                JOptionPane.showMessageDialog(null, "Attendee registered successfully!");
+            }
+        });
+
+
+
         backToMainMenuButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -33,6 +54,29 @@ public class ManageAccessControlGui {
 
             }
         });
+        validateAttendeeEntryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String eventId = JOptionPane.showInputDialog("Enter Event ID:");
+                String attendeeId = JOptionPane.showInputDialog("Enter Attendee ID:");
+
+                boolean valid = accessControlService.validateAttendeeEntry(eventId, attendeeId);
+
+                if (valid) {
+                    JOptionPane.showMessageDialog(null, "✅ Entry validated. Welcome!");
+                } else {
+                    JOptionPane.showMessageDialog(null, "❌ Invalid entry or attendee already checked in.");
+                }
+            }
+        });
+        showAttendanceStatisticsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String eventId = JOptionPane.showInputDialog("Ingrese el ID del evento:");
+                String attendeesList = accessControlService.getAllAttendeesAsString(eventId);
+                JOptionPane.showMessageDialog(null, attendeesList, "Lista de Asistentes", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
         exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -45,6 +89,8 @@ public class ManageAccessControlGui {
 
             }
         });
+
+
     }
 
     public JPanel getPanelPrincipalAccessControl() {
