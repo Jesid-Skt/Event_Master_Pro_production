@@ -3,9 +3,12 @@ package Enums;
 public enum EventType {
     CONCERT,
     FESTIVAL,
-    CONFERENCE,
-    SEMINAR,
-    WORKSHOP,
+    THEATRE,
     EXHIBITION,
-    OTHER
+    WORKSHOP,
+    SPORTS,
+    SEMINAR,
+    CONFERENCE,
+    OTHER;
+
 }

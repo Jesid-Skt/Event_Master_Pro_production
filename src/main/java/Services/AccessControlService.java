@@ -4,11 +4,9 @@ import Model.AccessPackage.AccessControl;
 import Model.AccessPackage.Attendee;
 import java.util.List;
 
-import java.util.Scanner;
 
 public class AccessControlService {
-    private AccessControl accessControl = new AccessControl();
-    private Scanner scanner = new Scanner(System.in);
+    private final AccessControl accessControl = new AccessControl();
 
     public void registerNewAttendee(String eventId, String attendeeId, String name, String email) {
         Attendee attendee = new Attendee(attendeeId, name, email);
@@ -17,8 +15,7 @@ public class AccessControlService {
     }
 
     public boolean validateAttendeeEntry(String eventId, String attendeeId) {
-        boolean success = accessControl.validateEntry(eventId, attendeeId);
-        return success;
+        return accessControl.validateEntry(eventId, attendeeId);
     }
 
     public String getAllAttendeesAsString(String eventId) {
@@ -33,7 +30,7 @@ public class AccessControlService {
         return sb.toString();
     }
 
-    public void showAllAttendees(String eventId) {
-        accessControl.showAllAttendees(eventId);
+    public List<Attendee> getAllAttendees(String eventId) {
+        return accessControl.getAttendeesByEvent(eventId);
     }
 }
