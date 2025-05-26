@@ -3,10 +3,11 @@
   <grid id="27dc6" binding="PanelFolmularioCreateEvent" layout-manager="GridLayoutManager" row-count="15" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="647" height="665"/>
+      <xy x="20" y="20" width="647" height="690"/>
     </constraints>
     <properties>
       <background color="-15591660"/>
+      <foreground color="-330753"/>
     </properties>
     <border type="none"/>
     <children>
@@ -30,7 +31,7 @@
             </properties>
             <border type="none"/>
             <children>
-              <component id="ffb82" class="javax.swing.JLabel">
+              <component id="ffb82" class="javax.swing.JLabel" binding="formCreateEventLabel">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -70,13 +71,13 @@
             </constraints>
             <properties>
               <background color="-330753"/>
-              <foreground color="-330753"/>
+              <foreground color="-16777216"/>
               <text value="Ingrese el ID del venue"/>
             </properties>
           </component>
         </children>
       </grid>
-      <grid id="3f043" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="3f043" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -88,17 +89,24 @@
         </properties>
         <border type="none" title="ID Event"/>
         <children>
-          <component id="42334" class="javax.swing.JTextField" binding="FieldIDEvent">
+          <component id="b2041" class="javax.swing.JLabel" binding="LabelEventID">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-330753"/>
+              <enabled value="false"/>
+              <foreground color="-16777216"/>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="fe97c" class="javax.swing.JTextField" binding="FieldEventID">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
-            <properties>
-              <background color="-330753"/>
-              <foreground color="-330753"/>
-              <horizontalAlignment value="0"/>
-            </properties>
+            <properties/>
           </component>
         </children>
       </grid>
@@ -146,7 +154,7 @@
             </constraints>
             <properties>
               <background color="-330753"/>
-              <foreground color="-330753"/>
+              <foreground color="-16777216"/>
             </properties>
           </component>
         </children>
@@ -171,7 +179,7 @@
             </constraints>
             <properties>
               <background color="-330753"/>
-              <foreground color="-330753"/>
+              <foreground color="-16777216"/>
               <text value="Ejemplo: yyyy-MM-dd HH:mm"/>
             </properties>
           </component>
@@ -188,7 +196,7 @@
         </properties>
         <border type="none" title="End Date Time"/>
         <children>
-          <component id="f56f3" class="javax.swing.JFormattedTextField" binding="ejemploYyyyMMDdFormattedTextField" default-binding="true">
+          <component id="f56f3" class="javax.swing.JFormattedTextField" binding="formattedFieldEndDate">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -196,6 +204,7 @@
             </constraints>
             <properties>
               <background color="-330753"/>
+              <foreground color="-16777216"/>
               <text value="Ejemplo: yyyy-MM-dd HH:mm"/>
             </properties>
           </component>

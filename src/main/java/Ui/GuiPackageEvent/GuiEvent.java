@@ -1,6 +1,10 @@
 package Ui.GuiPackageEvent;
 
+import Repository.EventRepository;
+import Ui.GuiPackageFormulariosEvent.CalendarEvents;
 import Ui.GuiPackageFormulariosEvent.GuiFormularioCreateEvent;
+import Services.EventService;
+import Services.VenueService;
 import Ui.GuiPackageMainMenu.GuiMainMenu;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -22,13 +26,16 @@ public class GuiEvent {
     private JButton exitButton;
     private JButton backToMainMenuButton;
     private JButton viewCalendarButton;
-    private JButton categorizeEventButton;
     private JButton deleteEventButton;
     private JButton modifyEventButton;
     private JButton createEventButton;
     private JPanel PanelDinamicoEvent;
+    private EventService eventService;
+
 
     public GuiEvent() {
+        this.eventService = new EventService(new VenueService());
+
         exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -64,13 +71,63 @@ public class GuiEvent {
 
                 // Crea una nueva instancia de la ventana principal
                 GuiFormularioCreateEvent guiFormularioCreateEvent = new GuiFormularioCreateEvent();
+                guiFormularioCreateEvent.getLabelEventID().setVisible(true);
+                guiFormularioCreateEvent.getFieldEventID().setVisible(false);
+
                 JFrame frame = new JFrame("Create Event");
                 frame.setContentPane(guiFormularioCreateEvent.getPanelFolmularioCreateEvent());
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setLocationRelativeTo(null);
                 frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
                 frame.pack();
                 frame.setSize(500, 500);
+                frame.setVisible(true);
+            }
+        });
+        modifyEventButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GuiFormularioCreateEvent guiFormularioCreateEvent = new GuiFormularioCreateEvent();
+
+                // Cambia la visibilidad de los componentes
+                guiFormularioCreateEvent.getLabelEventID().setVisible(false);
+                guiFormularioCreateEvent.getFieldEventID().setVisible(true);
+                guiFormularioCreateEvent.getCreateEventButton().setText("Modify Event");
+                guiFormularioCreateEvent.getFormCreateEventLabel().setText("Modify Event");
+
+                JFrame frame = new JFrame("Modificar Evento");
+                frame.setContentPane(guiFormularioCreateEvent.getPanelFolmularioCreateEvent());
+                frame.setLocationRelativeTo(null);
+                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                frame.pack();
+                frame.setSize(500, 500);
+                frame.setVisible(true);
+            }
+        });
+
+        deleteEventButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String nombreEvento = JOptionPane.showInputDialog(null, "Ingresa el nombre del evento a eliminar:");
+                if (nombreEvento != null && !nombreEvento.trim().isEmpty()) {
+                    boolean eliminado = eventService.deleteEventByName(nombreEvento.trim());
+                    if (eliminado) {
+                        JOptionPane.showMessageDialog(null, "Evento eliminado correctamente.");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "No se encontró un evento con ese nombre.");
+                    }
+                }
+            }
+        });
+        viewCalendarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                EventRepository repository = new EventRepository();
+                CalendarEvents calendarEvents = new CalendarEvents();
+                JFrame frame = new JFrame("Calendar");
+                frame.setContentPane(calendarEvents.getPanelPrincipalClanderEvents());
+                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                frame.setLocationRelativeTo(null);
+                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
                 frame.setVisible(true);
             }
         });
@@ -110,7 +167,7 @@ public class GuiEvent {
         final Spacer spacer1 = new Spacer();
         JpanelTituloPrincipal.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         JPanelMenuEvent = new JPanel();
-        JPanelMenuEvent.setLayout(new GridLayoutManager(10, 1, new Insets(0, 0, 0, 0), -1, -1));
+        JPanelMenuEvent.setLayout(new GridLayoutManager(9, 1, new Insets(0, 0, 0, 0), -1, -1));
         JPanelMenuEvent.setBackground(new Color(-15591660));
         PanelPrincipalEvent.add(JPanelMenuEvent, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(207, 298), null, 0, false));
         exitButton = new JButton();
@@ -118,25 +175,19 @@ public class GuiEvent {
         exitButton.setEnabled(true);
         exitButton.setForeground(new Color(-330753));
         exitButton.setText("Exit");
-        JPanelMenuEvent.add(exitButton, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        JPanelMenuEvent.add(exitButton, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         backToMainMenuButton = new JButton();
         backToMainMenuButton.setBackground(new Color(-14829228));
         backToMainMenuButton.setEnabled(true);
         backToMainMenuButton.setForeground(new Color(-330753));
         backToMainMenuButton.setText(" Back to Main Menu");
-        JPanelMenuEvent.add(backToMainMenuButton, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        JPanelMenuEvent.add(backToMainMenuButton, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         viewCalendarButton = new JButton();
         viewCalendarButton.setBackground(new Color(-14829228));
         viewCalendarButton.setEnabled(true);
         viewCalendarButton.setForeground(new Color(-330753));
         viewCalendarButton.setText("View Calendar");
-        JPanelMenuEvent.add(viewCalendarButton, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        categorizeEventButton = new JButton();
-        categorizeEventButton.setBackground(new Color(-14829228));
-        categorizeEventButton.setEnabled(true);
-        categorizeEventButton.setForeground(new Color(-330753));
-        categorizeEventButton.setText("Categorize Event");
-        JPanelMenuEvent.add(categorizeEventButton, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        JPanelMenuEvent.add(viewCalendarButton, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         deleteEventButton = new JButton();
         deleteEventButton.setBackground(new Color(-14829228));
         deleteEventButton.setEnabled(true);
@@ -158,9 +209,9 @@ public class GuiEvent {
         final Spacer spacer2 = new Spacer();
         JPanelMenuEvent.add(spacer2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
-        JPanelMenuEvent.add(spacer3, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        JPanelMenuEvent.add(spacer3, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer4 = new Spacer();
-        JPanelMenuEvent.add(spacer4, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        JPanelMenuEvent.add(spacer4, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         PanelDinamicoEvent = new JPanel();
         PanelDinamicoEvent.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         PanelDinamicoEvent.setBackground(new Color(-15591660));

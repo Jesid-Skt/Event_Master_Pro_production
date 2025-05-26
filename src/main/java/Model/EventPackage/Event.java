@@ -29,7 +29,7 @@ public class Event {
     }
 
     // Getters y setters
-    public String getId() { return id; }
+    public String getId() { return this.id; }
     public void setId(String id) { this.id = id; }
 
     public String getName() { return name; }
