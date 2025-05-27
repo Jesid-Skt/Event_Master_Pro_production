@@ -1,6 +1,8 @@
 package DTOS;
 
 
+import Model.AccessPackage.Attendee;
+
 public class AttendeeDTO {
     private String attendeeId;
     private String name;
@@ -13,6 +15,12 @@ public class AttendeeDTO {
         this.attendeeId = attendeeId;
         this.name = name;
         this.checkedIn = checkedIn;
+    }
+    // Constructor que recibe un Attendee
+    public AttendeeDTO(Attendee attendee) {
+        this.attendeeId = attendee.getAttendeeId();
+        this.name = attendee.getName();
+        this.checkedIn = attendee.isCheckedIn();
     }
 
     public String getAttendeeId() {

@@ -47,19 +47,4 @@ public class AccessControlService {
         return false;
     }
 
-    public String getAllAttendeesAsString(String eventId) {
-        List<Attendee> attendees = accessControl.getAttendeesByEvent(eventId);
-        if (attendees == null || attendees.isEmpty()) {
-            return "No hay asistentes registrados para este evento.";
-        }
-        StringBuilder sb = new StringBuilder();
-        for (Attendee attendee : attendees) {
-            sb.append(attendee.toString()).append("\n");
-        }
-        return sb.toString();
-    }
-
-    public List<Attendee> getAllAttendees(String eventId) {
-        return accessControl.getAttendeesByEvent(eventId);
-    }
 }

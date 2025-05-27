@@ -1,29 +1,37 @@
 package Model.EventPackage;
 
+import Enums.City;
+import Enums.Country;
+
 public class Location {
     private String address;
-    private String city;
-    private String country;
-    private String contactInfo;
+    private Country country;
+    private City city;
 
-    public Location(String address, String city, String country, String contactInfo) {
+    public Location(String address, City city, Country country) {
         this.address = address;
         this.city = city;
         this.country = country;
-        this.contactInfo = contactInfo;
     }
 
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
 
-    public String getCity() { return city; }
-    public void setCity(String city) { this.city = city; }
+    public Country getCountry() {
+        return country;
+    }
 
-    public String getCountry() { return country; }
-    public void setCountry(String country) { this.country = country; }
+    public void setCountry(Country country) {
+        this.country = country;
+    }
 
-    public String getContactInfo() { return contactInfo; }
-    public void setContactInfo(String contactInfo) { this.contactInfo = contactInfo; }
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
+    }
 
     @Override
     public String toString() {

@@ -1,5 +1,7 @@
 package Ui.GuiPackageAccessControl;
 
+import DTOS.AttendeeDTO;
+import DTOS.EventDTO;
 import Services.AccessControlService;
 import Services.AttendeeService;
 import Services.TicketService;
@@ -17,7 +19,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Locale;
+import java.util.List;
 
+import static java.awt.Color.black;
 import static java.awt.Color.white;
 
 public class GuiAccessControl {
@@ -62,7 +66,7 @@ public class GuiAccessControl {
                 }
                 formulario.getLabelTicketCode().setText(codigoTicket);
                 formulario.getTextFieldIDattendee().setText(idAttendee);
-                formulario.getTextFieldIDattendee().setEditable(false);
+                formulario.getPanelShowAttendee().setVisible(false);
                 formulario.getLabelIDAttendee().setVisible(false);
                 formulario.getShowAttendanceStatisticsButton().setVisible(false);
                 formulario. getValidateTicketButton().setVisible(false);
@@ -77,46 +81,72 @@ public class GuiAccessControl {
                 JFrame frame = new JFrame("Formulario Control de Acceso");
                 frame.setContentPane(formulario.getPanelPrincipalFormularioAccessControl());
                 frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                frame.pack(); // Ajusta el tamaño del frame al contenido
+                frame.pack();
                 frame.setLocationRelativeTo(null);
                 frame.setResizable(false);
                 frame.setVisible(true);
-                formulario.getPanelPrincipalTituloFormulario().setVisible(true);
-                formulario.getLabelTituloPrincipal().setText("Validate Attendee Entry Form");
-                formulario.getPanelcodigoTicket().setVisible(false);
-                formulario.getPanelComboboxevento().setVisible(false);
-                formulario.getPanelcomboboxTicket().setVisible(false);
-                formulario.getShowAttendanceStatisticsButton().setVisible(false);
-                formulario.getRegistreNewAttendeeButton().setVisible(false);
-                formulario.getPanelestodeventa().setVisible(false);
                 formulario.getPanelestadodeuso().setVisible(false);
+                formulario.getPanelestodeventa().setVisible(false);
+                formulario.getPanelcomboboxTicket().setVisible(false);
+                formulario.getPanelComboboxevento().setVisible(false);
+                formulario.getRegistreNewAttendeeButton().setVisible(false);
+                formulario.getShowAttendanceStatisticsButton().setVisible(false);
+                formulario.getPanelShowAttendee().setVisible(false);
                 formulario.getPanelEmail().setVisible(false);
                 formulario.getPanelNombreAttendee().setVisible(false);
-
-                formulario.getTextFieldIDattendee().setEditable(true);
+                formulario.getPanelcodigoTicket().setVisible(false);
                 formulario.getTextFieldIDattendee().setBackground(Color.white);
-
-
-
-
-                String attendeeId = formulario.getTextFieldIDattendee().getText();
-                boolean valid = accessControlService.validateAttendeeEntryByTicketCode(attendeeId);
-
-                if (valid) {
-                    JOptionPane.showMessageDialog(null, "✅ Entrada validada. ¡Bienvenido!");
-                } else {
-                    JOptionPane.showMessageDialog(null, "❌ Entrada inválida o el asistente ya hizo check-in.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
+                formulario.getValidateTicketButton().setForeground(Color.white);
+                formulario.getLabelTituloPrincipal().setText("Validate Attendee Entry");
             }
-        });
+                });
         showAttendanceStatisticsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String eventId = JOptionPane.showInputDialog("Ingrese el ID del evento:");
-                String attendeesList = accessControlService.getAllAttendeesAsString(eventId);
-                JOptionPane.showMessageDialog(null, attendeesList, "Lista de Asistentes", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        GuiFormularioAccessControl formulario = new GuiFormularioAccessControl();
+                        JFrame frame = new JFrame("Formulario Control de Acceso");
+                        frame.setContentPane(formulario.getPanelPrincipalFormularioAccessControl());
+                        formulario.getPanelPrincipalTituloFormulario().setVisible(true);
+                        formulario.getLabelTituloPrincipal().setText("Show Attendance Statistics");
+                        // Oculta los paneles innecesarios
+                        formulario.getPanelcodigoTicket().setVisible(false);
+                        formulario.getPanelComboboxevento().setVisible(false);
+                        formulario.getPanelcomboboxTicket().setVisible(false);
+                        formulario.getShowAttendanceStatisticsButton().setVisible(false);
+                        formulario.getRegistreNewAttendeeButton().setVisible(false);
+                        formulario.getPanelestodeventa().setVisible(false);
+                        formulario.getPanelestadodeuso().setVisible(false);
+                        formulario.getPanelEmail().setVisible(false);
+                        formulario.getPanelNombreAttendee().setVisible(false);
+                        formulario.getPanelIDattendee().setVisible(false);
+                        formulario.getValidateTicketButton().setVisible(false);
+                        formulario.getLabelShowAllAttendee().setForeground(Color.white);
+
+
+                        // Obtener y mostrar los attendees
+                        AttendeeService attendeeService = new AttendeeService();
+
+
+                      // Supón que tienes un JComboBox llamado comboBoxEventos en tu formulario
+                        EventDTO eventoSeleccionado = (EventDTO) formulario.getComboBoxListaEvento().getSelectedItem();
+                        String eventId = (eventoSeleccionado != null) ? eventoSeleccionado.getEventId() : null;
+                       List<AttendeeDTO> attendees = attendeeService.getAllAttendees(null)
+                            .stream()
+                            .map(att -> new AttendeeDTO(att)) // Ajusta el constructor si es necesario
+                            .collect(java.util.stream.Collectors.toList());
+                        StringBuilder sb = new StringBuilder();
+                        for (AttendeeDTO attendee : attendees) {
+                            sb.append(attendee.toString()).append("\n");
+                        }
+                        formulario.getLabelShowAllAttendee().setText("<html>" + sb.toString().replaceAll("\n", "<br>") + "</html>");
+
+                        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                        frame.pack();
+                        frame.setLocationRelativeTo(null);
+                        frame.setResizable(false);
+                        frame.setVisible(true);
+                    }
+                });
         backToMainMenuButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -147,6 +177,7 @@ public class GuiAccessControl {
             }
         });
     }
+
 
     {
 // GUI initializer generated by IntelliJ IDEA GUI Designer

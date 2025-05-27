@@ -1,5 +1,7 @@
 package Services;
 
+import Model.AccessPackage.Attendee;
+
 import java.util.*;
 
 public class AttendeeService {
@@ -31,5 +33,28 @@ public class AttendeeService {
         int total = attendees.size();
         long attended = attendees.values().stream().filter(v -> v).count();
         return "Total registrados: " + total + "\nAsistieron: " + attended + "\nNo asistieron: " + (total - attended);
+    }
+
+    public String getAllAttendeesAsString(String eventId) {
+        List<Attendee> attendees = new ArrayList<>(); // Simulación: no hay lógica de eventos implementada
+        if (attendees.isEmpty()) {
+            return "No hay asistentes registrados para este evento.";
+        }
+        StringBuilder sb = new StringBuilder();
+        int checkInCount = 0;
+        for (Attendee attendee : attendees) {
+            sb.append(attendee.toString()).append("\n");
+            if (attendee.isCheckedIn()) {
+                checkInCount++;
+            }
+        }
+        sb.append("\nTotal de asistentes: ").append(attendees.size());
+        sb.append("\nTotal con check-in: ").append(checkInCount);
+        return sb.toString();
+    }
+
+    public List<Attendee> getAllAttendees(String eventId) {
+        Repository.AttendeeRepository attendeeRepository = new Repository.AttendeeRepository();
+        return attendeeRepository.loadAll();
     }
 }

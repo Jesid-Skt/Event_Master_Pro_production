@@ -14,13 +14,14 @@
     public class EventService {
 
         private final Map<String, Event> events = new HashMap<>();
-        private final EventRepository repository = new EventRepository();
+        private final EventRepository repository;
         private final Map<String, Double> budgets = new HashMap<>();
         private final Map<String, List<String>> ticketSales = new HashMap<>();
         private final VenueService venueService;
 
-        public EventService(VenueService venueService) {
+        public EventService(VenueService venueService, EventRepository repository) {
             this.venueService = venueService;
+            this.repository = repository;
         }
 
         // Now receives a DTO instead of separate parameters
@@ -97,22 +98,9 @@
             return true;
         }
 
-        public List<Event> getAllEvents() {
+        public List<EventDTO> getAllEvents() {
             repository.loadFromFile();
-            List<EventDTO> dtos = repository.getAllEventsAsList();
-            List<Event> events = new ArrayList<>();
-            for (EventDTO dto : dtos) {
-                Event event = new Event(
-                    dto.getEventId(),
-                    dto.getEventName(),
-                    EventType.valueOf(dto.getEventType()),
-                    LocalDateTime.parse(dto.getStartDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
-                    LocalDateTime.parse(dto.getEndDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
-                    venueService.getVenueById(dto.getVenueId())
-                );
-                events.add(event);
-            }
-            return events;
+            return repository.getAllEventsAsList();
         }
 
         public String generateUniqueEventID() {

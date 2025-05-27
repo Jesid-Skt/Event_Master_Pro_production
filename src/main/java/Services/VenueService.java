@@ -1,5 +1,7 @@
 package Services;
 
+import Enums.City;
+import Enums.Country;
 import Model.EventPackage.Availability;
 import Model.EventPackage.Location;
 import Model.EventPackage.Venue;
@@ -17,7 +19,7 @@ public class VenueService {
     private final Map<String, Venue> venues = new HashMap<>();
 
     // Crear un venue a partir de datos recibidos
-    public String createVenue(String name, String address, String city, String country, String contactInfo, int capacity) throws IllegalArgumentException {
+    public String createVenue(String name, String address, City city, Country country, int capacity) throws IllegalArgumentException {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Venue name cannot be empty.");
         }
@@ -26,7 +28,7 @@ public class VenueService {
         }
 
         String id = UUID.randomUUID().toString().substring(0, 8);
-        Location location = new Location(address, city, country, contactInfo);
+        Location location = new Location(address, city, country);
         Venue venue = new Venue(id, name, location, capacity);
         venues.put(id, venue);
 
@@ -53,20 +55,19 @@ public class VenueService {
         venue.setLocation(null);
     }
 
-    public void modifyLocationDetails(String venueId, String address, String city, String country, String contactInfo) throws NoSuchElementException {
+    public void modifyLocationDetails(String venueId, String address, City city, Country country) throws NoSuchElementException {
         Venue venue = venues.get(venueId);
         if (venue == null) {
             throw new NoSuchElementException("Venue not found.");
         }
-        Location loc = venue.getLocation();
-        if (loc == null) {
-            loc = new Location(address, city, country, contactInfo);
-            venue.setLocation(loc);
+        Location locat = venue.getLocation();
+        if (locat == null) {
+            locat = new Location(address, city, country);
+            venue.setLocation(locat);
         } else {
-            if (address != null && !address.isEmpty()) loc.setAddress(address);
-            if (city != null && !city.isEmpty()) loc.setCity(city);
-            if (country != null && !country.isEmpty()) loc.setCountry(country);
-            if (contactInfo != null && !contactInfo.isEmpty()) loc.setContactInfo(contactInfo);
+            if (address != null && !address.isEmpty()) locat.setAddress(address);
+           if (city != null) locat.setCity(city);
+           if (country != null) locat.setCountry(country);
         }
     }
 

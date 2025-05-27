@@ -1,6 +1,8 @@
 package Ui.GuiPackageVenue;
 
+import Ui.GuiPackageEvent.GuiPackageFormulariosEvent.GuiFormularioCreateEvent;
 import Ui.GuiPackageMainMenu.GuiMainMenu;
+import Ui.GuiPackageVenue.GuiPackageFormularioVenue.GuiFormilarioVenue;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -19,12 +21,16 @@ public class GuiVenue {
     private JLabel eventMasterProMenuLabel;
     private JPanel JPanelMenuEvent;
     private JButton exitButton;
-    private JButton removeLocationButton;
     private JButton modifyVenueButton;
     private JButton createVenueButton;
     private JButton backToMainMenuButton;
+    private JButton ButtonShowVenue;
+    private JButton ButtonShowVenueDetails;
+    private JButton ButtonRemoveVenue;
 
     public GuiVenue() {
+
+
         exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -50,6 +56,46 @@ public class GuiVenue {
                 frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
                 frame.setLocationRelativeTo(null);
                 frame.setVisible(true);
+
+            }
+        });
+
+        createVenueButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GuiFormilarioVenue formulario = new GuiFormilarioVenue();
+
+                JFrame frame = new JFrame("Create Event");
+                frame.setContentPane(formulario.getPanelPrincipalFormularioVenue());
+                formulario.getButtonDeleteVenue().setVisible(false);
+                formulario.getButtonModifyVenue().setVisible(false);
+                frame.setSize(600, 500);
+                frame.setLocationRelativeTo(null);
+                frame.setResizable(false);
+                frame.setVisible(true);
+            }
+        });
+        modifyVenueButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        ButtonRemoveVenue.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        ButtonShowVenue.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        ButtonShowVenueDetails.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
             }
         });
@@ -89,7 +135,7 @@ public class GuiVenue {
         final Spacer spacer1 = new Spacer();
         JpanelTituloPrincipal.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         JPanelMenuEvent = new JPanel();
-        JPanelMenuEvent.setLayout(new GridLayoutManager(11, 1, new Insets(0, 0, 0, 0), -1, -1));
+        JPanelMenuEvent.setLayout(new GridLayoutManager(10, 1, new Insets(0, 0, 0, 0), -1, -1));
         JPanelMenuEvent.setBackground(new Color(-15591660));
         PanelPrincipalVenue.add(JPanelMenuEvent, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(207, 298), null, 0, false));
         exitButton = new JButton();
@@ -97,13 +143,7 @@ public class GuiVenue {
         exitButton.setEnabled(true);
         exitButton.setForeground(new Color(-330753));
         exitButton.setText("Exit");
-        JPanelMenuEvent.add(exitButton, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        removeLocationButton = new JButton();
-        removeLocationButton.setBackground(new Color(-14829228));
-        removeLocationButton.setEnabled(true);
-        removeLocationButton.setForeground(new Color(-330753));
-        removeLocationButton.setText("remove Location");
-        JPanelMenuEvent.add(removeLocationButton, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        JPanelMenuEvent.add(exitButton, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         modifyVenueButton = new JButton();
         modifyVenueButton.setBackground(new Color(-14829228));
         modifyVenueButton.setEnabled(true);
@@ -119,33 +159,33 @@ public class GuiVenue {
         final Spacer spacer2 = new Spacer();
         JPanelMenuEvent.add(spacer2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
-        JPanelMenuEvent.add(spacer3, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        JPanelMenuEvent.add(spacer3, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer4 = new Spacer();
-        JPanelMenuEvent.add(spacer4, new GridConstraints(10, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        final JButton button1 = new JButton();
-        button1.setBackground(new Color(-14829228));
-        button1.setEnabled(true);
-        button1.setForeground(new Color(-330753));
-        button1.setText("remove Venue");
-        JPanelMenuEvent.add(button1, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JButton button2 = new JButton();
-        button2.setBackground(new Color(-14829228));
-        button2.setEnabled(true);
-        button2.setForeground(new Color(-330753));
-        button2.setText("show Venues");
-        JPanelMenuEvent.add(button2, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JButton button3 = new JButton();
-        button3.setBackground(new Color(-14829228));
-        button3.setEnabled(true);
-        button3.setForeground(new Color(-330753));
-        button3.setText("show Venue Details");
-        JPanelMenuEvent.add(button3, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        JPanelMenuEvent.add(spacer4, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        ButtonRemoveVenue = new JButton();
+        ButtonRemoveVenue.setBackground(new Color(-14829228));
+        ButtonRemoveVenue.setEnabled(true);
+        ButtonRemoveVenue.setForeground(new Color(-330753));
+        ButtonRemoveVenue.setText("remove Venue");
+        JPanelMenuEvent.add(ButtonRemoveVenue, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        ButtonShowVenue = new JButton();
+        ButtonShowVenue.setBackground(new Color(-14829228));
+        ButtonShowVenue.setEnabled(true);
+        ButtonShowVenue.setForeground(new Color(-330753));
+        ButtonShowVenue.setText("show Venues");
+        JPanelMenuEvent.add(ButtonShowVenue, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        ButtonShowVenueDetails = new JButton();
+        ButtonShowVenueDetails.setBackground(new Color(-14829228));
+        ButtonShowVenueDetails.setEnabled(true);
+        ButtonShowVenueDetails.setForeground(new Color(-330753));
+        ButtonShowVenueDetails.setText("show Venue Details");
+        JPanelMenuEvent.add(ButtonShowVenueDetails, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         backToMainMenuButton = new JButton();
         backToMainMenuButton.setBackground(new Color(-14829228));
         backToMainMenuButton.setEnabled(true);
         backToMainMenuButton.setForeground(new Color(-330753));
         backToMainMenuButton.setText("Back to Main Menu");
-        JPanelMenuEvent.add(backToMainMenuButton, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        JPanelMenuEvent.add(backToMainMenuButton, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
         panel2.setBackground(new Color(-15591660));

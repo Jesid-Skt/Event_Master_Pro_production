@@ -1,16 +1,14 @@
 package Model.EventPackage;
 
-    import Model.ArtistPackage.TechnicalFeature;
 
-    import java.util.ArrayList;
-    import java.util.List;
+import java.util.ArrayList;
+import java.util.List;
 
     public class Venue {
         private String id;
         private String name;
         private Location location;
         private int capacity;
-        private List<TechnicalFeature> technicalFeatures;
         private List<Availability> availabilities;
 
         public Venue(String id, String name, Location location, int capacity) {
@@ -18,7 +16,6 @@ package Model.EventPackage;
             this.name = name;
             this.location = location;
             this.capacity = capacity;
-            this.technicalFeatures = new ArrayList<>();
             this.availabilities = new ArrayList<>();
         }
 
@@ -34,9 +31,6 @@ package Model.EventPackage;
 
         public int getCapacity() { return capacity; }
         public void setCapacity(int capacity) { this.capacity = capacity; }
-
-        public List<TechnicalFeature> getTechnicalFeatures() { return technicalFeatures; }
-        public void setTechnicalFeatures(List<TechnicalFeature> technicalFeatures) { this.technicalFeatures = technicalFeatures; }
 
         public List<Availability> getAvailabilities() { return availabilities; }
         public void setAvailabilities(List<Availability> availabilities) { this.availabilities = availabilities; }

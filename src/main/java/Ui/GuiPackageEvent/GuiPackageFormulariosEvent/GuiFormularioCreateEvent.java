@@ -40,7 +40,7 @@ public class GuiFormularioCreateEvent {
 
         // Instanciar servicios
         venueService = new VenueService();
-        eventService = new EventService(venueService);
+        eventService = new EventService(new VenueService(), new Repository.EventRepository());
 
         // Generar ID único al abrir el formulario
         generatedEventID = eventService.generateUniqueEventID();

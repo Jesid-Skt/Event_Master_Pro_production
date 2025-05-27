@@ -34,7 +34,7 @@ public class GuiEvent {
 
 
     public GuiEvent() {
-        this.eventService = new EventService(new VenueService());
+        this.eventService = new EventService(new VenueService(), new EventRepository());
 
         exitButton.addActionListener(new ActionListener() {
             @Override
@@ -76,9 +76,8 @@ public class GuiEvent {
 
                 JFrame frame = new JFrame("Create Event");
                 frame.setContentPane(guiFormularioCreateEvent.getPanelFolmularioCreateEvent());
-                frame.setLocationRelativeTo(null);
-                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
                 frame.pack();
+                frame.setLocationRelativeTo(null);
                 frame.setSize(500, 500);
                 frame.setVisible(true);
             }
