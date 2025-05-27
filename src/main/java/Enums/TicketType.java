@@ -19,4 +19,18 @@ public enum TicketType {
     public double getPrice() {
         return price;
     }
+
+    @Override
+    public String toString() {
+        // Convierte el nombre del enum a un formato más legible
+        String name = name().replace('_', ' ').toLowerCase();
+        String[] words = name.split(" ");
+        StringBuilder sb = new StringBuilder();
+        for (String word : words) {
+            sb.append(Character.toUpperCase(word.charAt(0)))
+                    .append(word.substring(1))
+                    .append(" ");
+        }
+        return sb.toString().trim();
+    }
 }

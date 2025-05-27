@@ -1,97 +1,80 @@
 package Services;
 
-import java.util.*;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+            import DTOS.FinancialsDTO;
+            import Repository.FinancialRepository;
 
-public class FinanceService {
+            import java.math.BigDecimal;
+            import java.util.HashMap;
+            import java.util.List;
+            import java.util.Map;
 
-    private final Map<String, BigDecimal> finances = new HashMap<>();
-    private final Map<String, List<BigDecimal>> incomeHistory = new HashMap<>();
-    private final Map<String, List<BigDecimal>> expenseHistory = new HashMap<>();
+            public class FinanceService {
 
-    public String registerBudget(BigDecimal budgetAmount) {
-        if (budgetAmount == null || budgetAmount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Budget must be a positive number.");
-        }
+                private final FinancialRepository repository = new FinancialRepository();
 
-        String eventId = UUID.randomUUID().toString().substring(0, 8);
-        finances.put(eventId, budgetAmount.setScale(2, RoundingMode.HALF_UP));
-        return eventId;
-    }
+                public FinanceService() {
+                    repository.loadFromFile();
+                }
 
-    public boolean trackIncome(String eventId, BigDecimal amount) {
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) < 0) return false;
-        finances.putIfAbsent(eventId, BigDecimal.ZERO);
-        finances.put(eventId, finances.get(eventId).add(amount.setScale(2, RoundingMode.HALF_UP)));
-        incomeHistory.computeIfAbsent(eventId, k -> new ArrayList<>()).add(amount);
-        return true;
-    }
+                public boolean registerFinancials(String eventId, BigDecimal budget, BigDecimal income, BigDecimal expense) {
+                    if (eventId == null || eventId.isEmpty()) {
+                        throw new IllegalArgumentException("El ID del evento no puede ser nulo o vacío.");
+                    }
+                    if ((budget == null || budget.compareTo(BigDecimal.ZERO) < 0) &&
+                        (income == null || income.compareTo(BigDecimal.ZERO) < 0) &&
+                        (expense == null || expense.compareTo(BigDecimal.ZERO) < 0)) {
+                        throw new IllegalArgumentException("Debe ingresar al menos un valor positivo.");
+                    }
 
-    public boolean trackExpense(String eventId, BigDecimal amount) {
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) < 0) return false;
-        finances.putIfAbsent(eventId, BigDecimal.ZERO);
-        finances.put(eventId, finances.get(eventId).subtract(amount.setScale(2, RoundingMode.HALF_UP)));
-        expenseHistory.computeIfAbsent(eventId, k -> new ArrayList<>()).add(amount);
-        return true;
-    }
+                    FinancialsDTO dto = new FinancialsDTO();
+                    dto.setFinancialId(java.util.UUID.randomUUID().toString());
+                    dto.setEventId(eventId);
+                    dto.setBudget(budget != null ? budget.doubleValue() : 0.0);
+                    dto.setIncome(income != null ? income.doubleValue() : 0.0);
+                    dto.setExpense(expense != null ? expense.doubleValue() : 0.0);
 
-    public List<BigDecimal> getIncomeHistory(String eventId) {
-        return incomeHistory.getOrDefault(eventId, Collections.emptyList());
-    }
+                    repository.addFinancial(dto);
+                    return true;
+                }
 
-    public List<BigDecimal> getExpenseHistory(String eventId) {
-        return expenseHistory.getOrDefault(eventId, Collections.emptyList());
-    }
+                public FinancialsDTO getFinancialById(String financialId) {
+                    return repository.getById(financialId);
+                }
 
-    public BigDecimal getCurrentBalance(String eventId) {
-        return finances.getOrDefault(eventId, BigDecimal.ZERO);
-    }
+                public List<FinancialsDTO> getFinancialsByEventId(String eventId) {
+                    return repository.getByEventId(eventId);
+                }
 
-    public Map<String, BigDecimal> getFinances() {
-        return Collections.unmodifiableMap(finances);
-    }
+                public List<FinancialsDTO> getAllFinancials() {
+                    return repository.getAllFinancials();
+                }
 
-    public Map<String, List<BigDecimal>> getIncomeHistories() {
-        return Collections.unmodifiableMap(incomeHistory);
-    }
+                public String getFinancialSummary() {
+                    List<FinancialsDTO> all = repository.getAllFinancials();
+                    if (all.isEmpty()) return "❌ No financial records found.";
 
-    public Map<String, List<BigDecimal>> getExpenseHistories() {
-        return Collections.unmodifiableMap(expenseHistory);
-    }
+                    StringBuilder sb = new StringBuilder("📈 Financial Summary for All Events\n");
+                    double totalIncome = 0;
+                    double totalExpenses = 0;
+                    Map<String, Double> balances = new HashMap<>();
 
-    public String getFinancialSummary() {
-        if (finances.isEmpty()) return "❌ No financial records found.";
+                    for (FinancialsDTO dto : all) {
+                        double balance = dto.getIncome() - dto.getExpense();
+                        balances.put(dto.getEventId(), balances.getOrDefault(dto.getEventId(), 0.0) + balance);
+                        totalIncome += dto.getIncome();
+                        totalExpenses += dto.getExpense();
+                    }
 
-        StringBuilder sb = new StringBuilder("📈 Financial Summary for All Events\n");
-        BigDecimal totalIncome = BigDecimal.ZERO;
-        BigDecimal totalExpenses = BigDecimal.ZERO;
+                    for (String eventId : balances.keySet()) {
+                        sb.append("\n🎯 Event ID: ").append(eventId)
+                          .append("\nCurrent Balance: $").append(balances.get(eventId));
+                    }
 
-        for (String eventId : finances.keySet()) {
-            sb.append("\n🎯 Event ID: ").append(eventId)
-                    .append("\nCurrent Balance: $").append(finances.get(eventId));
+                    sb.append("\n\n=== Overall Summary ===")
+                      .append("\nTotal Income: $").append(totalIncome)
+                      .append("\nTotal Expenses: $").append(totalExpenses)
+                      .append("\nNet Balance: $").append(totalIncome - totalExpenses);
 
-            if (incomeHistory.containsKey(eventId)) {
-                BigDecimal eventIncome = incomeHistory.get(eventId).stream()
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
-                sb.append("\nTotal Income: $").append(eventIncome);
-                totalIncome = totalIncome.add(eventIncome);
+                    return sb.toString();
+                }
             }
-
-            if (expenseHistory.containsKey(eventId)) {
-                BigDecimal eventExpenses = expenseHistory.get(eventId).stream()
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
-                sb.append("\nTotal Expenses: $").append(eventExpenses);
-                totalExpenses = totalExpenses.add(eventExpenses);
-            }
-        }
-
-        sb.append("\n\n=== Overall Summary ===")
-                .append("\nTotal Income: $").append(totalIncome)
-                .append("\nTotal Expenses: $").append(totalExpenses)
-                .append("\nNet Balance: $").append(totalIncome.subtract(totalExpenses));
-
-        return sb.toString();
-    }
-}
-

@@ -1,12 +1,15 @@
 package Repository;
 
 import DTOS.VenueDTO;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 public class VenueRepository {
+    private final com.google.gson.Gson gson = new com.google.gson.Gson();
     private List<VenueDTO> venueList = new ArrayList<>();
     private final String FILE_PATH = "venues.txt";
 
@@ -29,15 +32,8 @@ public class VenueRepository {
     }
 
     public void saveToFile() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
-            for (VenueDTO venue : venueList) {
-                writer.write(String.join(";",
-                        venue.getVenueId(),
-                        venue.getName(),
-                        venue.getLocation(),
-                        String.valueOf(venue.getCapacity())));
-                writer.newLine();
-            }
+        try (Writer writer = new FileWriter(FILE_PATH)) {
+            gson.toJson(venueList, writer);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -45,19 +41,14 @@ public class VenueRepository {
 
     public void loadFromFile() {
         venueList.clear();
-        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(";");
-                if (parts.length == 4) {
-                    VenueDTO venue = new VenueDTO();
-                    venue.setVenueId(parts[0]);
-                    venue.setName(parts[1]);
-                    venue.setLocation(parts[2]);
-                    venue.setCapacity(Integer.parseInt(parts[3]));
-                    venueList.add(venue);
-                }
+        try (Reader reader = new FileReader(FILE_PATH)) {
+            Type listType = new TypeToken<List<VenueDTO>>() {}.getType();
+            List<VenueDTO> loadedList = gson.fromJson(reader, listType);
+            if (loadedList != null) {
+                venueList.addAll(loadedList);
             }
+        } catch (FileNotFoundException e) {
+            // Si el archivo no existe, la lista queda vacía
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -41,6 +41,10 @@ public class AccessControl {
         return attendees != null ? attendees.size() : 0;
     }
 
+    public HashMap<String, List<Attendee>> getAttendeesByEventMap() {
+        return attendeesByEvent;
+    }
+
     public int getTotalCheckedIn(String eventId) {
         List<Attendee> attendees = attendeesByEvent.get(eventId);
         if (attendees == null) return 0;

@@ -1,49 +1,89 @@
 package DTOS;
 
-public class ArtistDTO {
-    private String artist_id;
-    private String artist_name;
-    private String genre;
+    import java.util.List;
 
-    public ArtistDTO() {
-    }
+    public class ArtistDTO {
+        private String idArtist;
+        private String name;
+        private String contactInfo;
+        private List<String> technicalRequirements;
+        private List<String> eventHistory; // Usualmente se usan IDs o nombres, no objetos completos
+        private List<String> participationHistories; // Igual, IDs o descripciones
 
-    public ArtistDTO(String artist_id, String artist_name, String genre) {
-        this.artist_id = artist_id;
-        this.artist_name = artist_name;
-        this.genre = genre;
-    }
+        public ArtistDTO() {}
 
-    public String getArtistId() {
-        return artist_id;
-    }
+        public ArtistDTO(String idArtist, String name, String contactInfo,
+                         List<String> technicalRequirements,
+                         List<String> eventHistory,
+                         List<String> participationHistories) {
+            this.idArtist = idArtist;
+            this.name = name;
+            this.contactInfo = contactInfo;
+            this.technicalRequirements = technicalRequirements;
+            this.eventHistory = eventHistory;
+            this.participationHistories = participationHistories;
+        }
 
-    public void setArtistId(String artist_id) {
-        this.artist_id = artist_id;
-    }
+        // Getters y setters para todos los campos...
 
-    public String getArtistName() {
-        return artist_name;
-    }
 
-    public void setArtistName(String artist_name) {
-        this.artist_name = artist_name;
-    }
+        public String getIdArtist() {
+            return idArtist;
+        }
 
-    public String getGenre() {
-        return genre;
-    }
+        public void setIdArtist(String idArtist) {
+            this.idArtist = idArtist;
+        }
 
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
+        public String getNameArtist() {
+            return name;
+        }
 
-    @Override
-    public String toString() {
-        return "ArtistDTO{" +
-                "artist_id='" + artist_id + '\'' +
-                ", name='" + artist_name + '\'' +
-                ", genre='" + genre + '\'' +
-                '}';
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getContactInfo() {
+            return contactInfo;
+        }
+
+        public void setContactInfo(String contactInfo) {
+            this.contactInfo = contactInfo;
+        }
+
+        public List<String> getTechnicalRequirements() {
+            return technicalRequirements;
+        }
+
+        public void setTechnicalRequirements(List<String> technicalRequirements) {
+            this.technicalRequirements = technicalRequirements;
+        }
+
+        public List<String> getEventHistory() {
+            return eventHistory;
+        }
+
+        public void setEventHistory(List<String> eventHistory) {
+            this.eventHistory = eventHistory;
+        }
+
+        public List<String> getParticipationHistories() {
+            return participationHistories;
+        }
+
+        public void setParticipationHistories(List<String> participationHistories) {
+            this.participationHistories = participationHistories;
+        }
+
+        @Override
+        public String toString() {
+            return "ArtistDTO{" +
+                    "idArtist='" + idArtist + '\'' +
+                    ", name='" + name + '\'' +
+                    ", contactInfo='" + contactInfo + '\'' +
+                    ", technicalRequirements=" + technicalRequirements +
+                    ", eventHistory=" + eventHistory +
+                    ", participationHistories=" + participationHistories +
+                    '}';
+        }
     }
-}

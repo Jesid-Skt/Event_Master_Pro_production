@@ -1,8 +1,10 @@
 package Services;
 
+import DTOS.ArtistDTO;
 import Model.ArtistPackage.Artist;
 import Model.ArtistPackage.TechnicalFeature;
 import Model.ArtistPackage.ParticipationHistory;
+import Repository.ArtistRepository;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -11,6 +13,36 @@ import java.util.stream.Collectors;
 public class ArtistService {
 
     private final Map<String, Artist> artists = new HashMap<>();
+    private final ArtistRepository artistRepository = new ArtistRepository();
+
+    // Cargar artistas desde el archivo JSON al iniciar
+    public void loadArtistsFromFile() {
+        artistRepository.loadFromFile();
+        artists.clear();
+        for (ArtistDTO dto : artistRepository.getAllArtists()) {
+            Artist artist = new Artist(dto.getIdArtist(), dto.getNameArtist(), dto.getContactInfo());
+            artist.setTechnicalRequirements(dto.getTechnicalRequirements());
+            // Si tienes historial de participación en el DTO, agrégalo aquí
+            artists.put(artist.getIdArtist(), artist);
+        }
+    }
+
+    // Guardar todos los artistas actuales en el archivo JSON
+    public void saveArtistsToFile() {
+        List<ArtistDTO> dtos = artists.values().stream()
+                .map(artist -> new ArtistDTO(
+                        artist.getIdArtist(),
+                        artist.getName(),
+                        artist.getContactInfo(),
+                        artist.getTechnicalRequirements(),
+                        new ArrayList<>(), // Puedes mapear el historial si lo tienes
+                        new ArrayList<>()
+                ))
+                .collect(Collectors.toList());
+        artistRepository.getAllArtists().clear();
+        artistRepository.getAllArtists().addAll(dtos);
+        artistRepository.saveToFile();
+    }
 
     public Artist registerArtist(String name, String contact, List<String> requirements) throws IllegalArgumentException {
         if (name == null || name.isEmpty()) {
@@ -24,6 +56,11 @@ public class ArtistService {
         Artist artist = new Artist(id, name, contact);
         artist.setTechnicalRequirements(requirements);
         artists.put(id, artist);
+
+        // Guardar en el repositorio
+        ArtistDTO dto = new ArtistDTO(id, name, contact, requirements, new ArrayList<>(), new ArrayList<>());
+        artistRepository.addArtist(dto);
+
         return artist;
     }
 
@@ -37,11 +74,16 @@ public class ArtistService {
         if (newContact != null && !newContact.isEmpty()) {
             artist.setContactInfo(newContact);
         }
+        saveArtistsToFile();
         return true;
     }
 
     public boolean deleteArtist(String id) {
-        return artists.remove(id) != null;
+        if (artists.remove(id) != null) {
+            saveArtistsToFile();
+            return true;
+        }
+        return false;
     }
 
     public boolean addParticipationHistory(String artistId, String historyId, String eventName, String role, LocalDate date) {
@@ -50,6 +92,7 @@ public class ArtistService {
         Artist artist = artists.get(artistId);
         ParticipationHistory participation = new ParticipationHistory(historyId, artist, eventName, role, date);
         artist.addParticipationHistory(participation);
+        saveArtistsToFile();
         return true;
     }
 
@@ -91,7 +134,7 @@ public class ArtistService {
         Artist artist = artists.get(id);
         if (artist == null) return Collections.emptyList();
         return artist.getTechnicalRequirements().stream()
-                .map(TechnicalFeature::new)
+                .map(req -> new TechnicalFeature(req,"",""))
                 .collect(Collectors.toList());
     }
 
@@ -106,5 +149,9 @@ public class ArtistService {
     public Map<String, Artist> getArtists() {
         return artists;
     }
-}
 
+    // Métodos directos del repositorio si los necesitas
+    public ArtistDTO findArtistByName(Artist artist) {
+        return artistRepository.findName(artist);
+    }
+}

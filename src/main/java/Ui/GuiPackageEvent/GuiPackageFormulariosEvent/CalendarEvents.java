@@ -1,4 +1,4 @@
-package Ui.GuiPackageFormulariosEvent;
+package Ui.GuiPackageEvent.GuiPackageFormulariosEvent;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;

@@ -1,8 +1,8 @@
 package Ui.GuiPackageEvent;
 
 import Repository.EventRepository;
-import Ui.GuiPackageFormulariosEvent.CalendarEvents;
-import Ui.GuiPackageFormulariosEvent.GuiFormularioCreateEvent;
+import Ui.GuiPackageEvent.GuiPackageFormulariosEvent.CalendarEvents;
+import Ui.GuiPackageEvent.GuiPackageFormulariosEvent.GuiFormularioCreateEvent;
 import Services.EventService;
 import Services.VenueService;
 import Ui.GuiPackageMainMenu.GuiMainMenu;

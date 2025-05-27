@@ -1,4 +1,4 @@
-package Ui.GuiPackageFormulariosEvent;
+package Ui.GuiPackageEvent.GuiPackageFormulariosEvent;
 
 import DTOS.EventDTO;
 import Enums.EventType;
@@ -64,7 +64,7 @@ public class GuiFormularioCreateEvent {
                 return;
             }
 
-            EventDTO dto = new EventDTO(eventName, eventType.name(), startDateTimeStr, endDateTimeStr, venueID);
+            EventDTO dto = new EventDTO(generatedEventID, eventName, eventType.name(), startDateTimeStr, endDateTimeStr, venueID);
 
             try {
                 Event createdEvent = eventService.createEvent(dto);
