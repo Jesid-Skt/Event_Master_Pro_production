@@ -1,6 +1,7 @@
 package Ui.GuiPackageTicket;
 
 import Ui.GuiPackageMainMenu.GuiMainMenu;
+import Ui.GuiPackageTicket.GuiPackageFormularioTicket.GuiFormularioTicket;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -57,6 +58,38 @@ public class GuiTicket {
                 JOptionPane.showMessageDialog(frame, "Thank you for using Event Master Pro!", "Exit", JOptionPane.INFORMATION_MESSAGE);
                 System.exit(0); // Cierra la aplicación
 
+            }
+        });
+        createTicketTypeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GuiFormularioTicket formularioTicket = new GuiFormularioTicket();
+                formularioTicket.getButtonRegistreSale().setVisible(false);
+
+                JFrame frame = new JFrame("Create Ticket Type");
+                frame.setContentPane(formularioTicket.getPanelFolmularioCreateTicketType());
+                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                frame.setResizable(false);
+                frame.pack();
+                frame.setSize(500, 500);
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            }
+        });
+        registerSaleButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GuiFormularioTicket formularioTicket = new GuiFormularioTicket();
+                formularioTicket.getCreateTicketButton().setVisible(false);
+
+                JFrame frame = new JFrame("Register Sale");
+                frame.setContentPane(formularioTicket.getPanelFolmularioCreateTicketType());
+                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                frame.setResizable(false);
+                frame.pack();
+                frame.setSize(500, 500);
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
             }
         });
     }
@@ -164,4 +197,5 @@ public class GuiTicket {
     public JPanel getPanelPrincipalTicket() {
         return PanelPrincipalTicket;
     }
+
 }

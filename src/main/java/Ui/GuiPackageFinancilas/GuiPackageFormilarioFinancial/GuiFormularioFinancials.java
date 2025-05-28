@@ -1,6 +1,10 @@
 package Ui.GuiPackageFinancilas.GuiPackageFormilarioFinancial;
 
 import DTOS.EventDTO;
+import Repository.EventRepository;
+import Repository.VenueRepository;
+import Services.EventService;
+import Services.VenueService;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -10,9 +14,13 @@ import javax.swing.border.TitledBorder;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Locale;
+import java.math.BigDecimal;
+import Services.FinanceService;
+
 
 public class GuiFormularioFinancials {
 
@@ -27,21 +35,99 @@ public class GuiFormularioFinancials {
     private JPanel PanelbuttonFinancials;
     private JPanel PanelcomboboxListEvent;
     private JComboBox<EventDTO> comboBoxListEVent;
+    private JButton ButtonViewFinancials;
+    private JButton ButtonSummaryFinancials;
+    private JPanel PanelItextFieldIncome;
+    private JPanel PanelLabelViewFinancials;
+    private JLabel LabelViewFinancials;
+
+    private void cargarEventosEnComboBox() {
+        try {
+            VenueRepository venueRepository = new VenueRepository();
+            VenueService venueService = new VenueService(venueRepository);
+
+            EventRepository eventRepository = new EventRepository();
+            EventService eventService = new EventService(venueService, eventRepository);
+
+            List<EventDTO> eventos = eventService.getAllEvents();
+            comboBoxListEVent.removeAllItems();
+
+            for (EventDTO evento : eventos) {
+                comboBoxListEVent.addItem(evento);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error al cargar eventos: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
+    }
+
+    public GuiFormularioFinancials() {
+        cargarEventosEnComboBox(); // 👈 Llenar combo al iniciar
+
+        registreBudgetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                FinanceService financeService = new FinanceService();
+
+                try {
+                    String budgetText = textFieldBudget.getText().trim();
+                    String expenseText = textFieldExpense.getText().trim();
+                    String incomeText = textFieldIncome.getText().trim();
+                    EventDTO selectedEvent = (EventDTO) comboBoxListEVent.getSelectedItem();
+
+                    if (selectedEvent == null) {
+                        JOptionPane.showMessageDialog(null, "Debe seleccionar un evento.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    if (budgetText.isEmpty() && incomeText.isEmpty() && expenseText.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Debe ingresar al menos un valor numérico (budget, income o expense).", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    BigDecimal budget = budgetText.isEmpty() ? null : new BigDecimal(budgetText);
+                    BigDecimal income = incomeText.isEmpty() ? null : new BigDecimal(incomeText);
+                    BigDecimal expense = expenseText.isEmpty() ? null : new BigDecimal(expenseText);
+
+                    boolean success = financeService.registerFinancials(selectedEvent.getEventId(), budget, income, expense);
+
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "✅ Registro exitoso.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                        textFieldBudget.setText("");
+                        textFieldIncome.setText("");
+                        textFieldExpense.setText("");
+                    }
+
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Los campos deben contener valores numéricos válidos.", "Error de formato", JOptionPane.ERROR_MESSAGE);
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Validación", JOptionPane.WARNING_MESSAGE);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "❌ Error inesperado: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    ex.printStackTrace();
+                }
+            }
+        });
+        ButtonViewFinancials.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        ButtonSummaryFinancials.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+    }
+
 
     {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
 // >>> IMPORTANT!! <<<
 // DO NOT EDIT OR ADD ANY CODE HERE!
         $$$setupUI$$$();
-    }
-
-    public GuiFormularioFinancials() {
-        registreBudgetButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
     }
 
     /**
@@ -65,7 +151,7 @@ public class GuiFormularioFinancials {
         label1.setText("Form Financials");
         PanelPrincipalTituloFinancials.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(4, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.setLayout(new GridLayoutManager(4, 3, new Insets(0, 0, 0, 0), -1, -1));
         panel1.setBackground(new Color(-15591660));
         PanelPrincipalFormularioFinancials.add(panel1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         Panelbudget = new JPanel();
@@ -84,14 +170,14 @@ public class GuiFormularioFinancials {
         PanelExpense.setBorder(BorderFactory.createTitledBorder(null, "Valor expense", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         textFieldExpense = new JTextField();
         PanelExpense.add(textFieldExpense, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        final JPanel panel2 = new JPanel();
-        panel2.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        panel2.setBackground(new Color(-15591660));
-        panel2.setEnabled(false);
-        panel1.add(panel2, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        panel2.setBorder(BorderFactory.createTitledBorder(null, "Valor  income", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+        PanelItextFieldIncome = new JPanel();
+        PanelItextFieldIncome.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        PanelItextFieldIncome.setBackground(new Color(-15591660));
+        PanelItextFieldIncome.setEnabled(false);
+        panel1.add(PanelItextFieldIncome, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        PanelItextFieldIncome.setBorder(BorderFactory.createTitledBorder(null, "Valor  income", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         textFieldIncome = new JTextField();
-        panel2.add(textFieldIncome, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        PanelItextFieldIncome.add(textFieldIncome, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         PanelbuttonFinancials = new JPanel();
         PanelbuttonFinancials.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         PanelbuttonFinancials.setBackground(new Color(-15591660));
@@ -104,10 +190,25 @@ public class GuiFormularioFinancials {
         PanelcomboboxListEvent.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         PanelcomboboxListEvent.setBackground(new Color(-15591660));
         PanelcomboboxListEvent.setEnabled(false);
-        panel1.add(PanelcomboboxListEvent, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel1.add(PanelcomboboxListEvent, new GridConstraints(0, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         PanelcomboboxListEvent.setBorder(BorderFactory.createTitledBorder(null, "Seleccione una opcion", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         comboBoxListEVent = new JComboBox();
         PanelcomboboxListEvent.add(comboBoxListEVent, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        ButtonViewFinancials = new JButton();
+        ButtonViewFinancials.setBackground(new Color(-14829228));
+        ButtonViewFinancials.setText("view Financials");
+        panel1.add(ButtonViewFinancials, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        ButtonSummaryFinancials = new JButton();
+        ButtonSummaryFinancials.setBackground(new Color(-14829228));
+        ButtonSummaryFinancials.setText("View Summary Financials");
+        panel1.add(ButtonSummaryFinancials, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        PanelLabelViewFinancials = new JPanel();
+        PanelLabelViewFinancials.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        PanelLabelViewFinancials.setBackground(new Color(-15591660));
+        panel1.add(PanelLabelViewFinancials, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        LabelViewFinancials = new JLabel();
+        LabelViewFinancials.setText("");
+        PanelLabelViewFinancials.add(LabelViewFinancials, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

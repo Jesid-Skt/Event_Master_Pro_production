@@ -111,13 +111,13 @@ public class GuiFInancials {
         viewFinancialsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                //tirar codigo aqui
             }
         });
         viewFinancialSummaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                //tirar codigo aqui
             }
         });
     }
