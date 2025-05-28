@@ -1,9 +1,9 @@
 package Ui.GuiPackageVenue.GuiPackageFormularioVenue;
 
+import DTOS.VenueDTO;
 import Enums.City;
 import Enums.Country;
 import Model.EventPackage.Venue;
-import Repository.EventRepository;
 import Repository.VenueRepository;
 import Services.EventService;
 import Services.VenueService;
@@ -36,10 +36,15 @@ public class GuiFormilarioVenue {
     private JButton buttonCreateVenue;
     private JButton ButtonModifyVenue;
     private JButton ButtonDeleteVenue;
+    private JPanel PanelShowVenue;
+    private JLabel LabelShowVenue;
+    private JButton buttonSearchVenue;
     private EventService eventService;
     private VenueService venueService;
     private VenueRepository repository = new VenueRepository();
     private String generatedVenueID;
+    private VenueDTO currentVenue;
+
 
     public GuiFormilarioVenue() {
 
@@ -48,13 +53,14 @@ public class GuiFormilarioVenue {
         // Genera el ID solo una vez al abrir el formulario
         generatedVenueID = venueService.generateUniqueVenueID();
         getTextFieldIDVenue().setText(generatedVenueID);
+        venueRepository.loadFromFile();
 
         JComboBox<City> cityComboBox = new JComboBox<>(City.values());
         JComboBox<Country> countryComboBox = new JComboBox<>(Country.values());
         comboBoxCity.setModel(cityComboBox.getModel());
         comboBoxCountry.setModel(countryComboBox.getModel());
 
-       buttonCreateVenue.addActionListener(new ActionListener() {
+        buttonCreateVenue.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String nameVenue = textFieldNameVenue.getText();
@@ -73,12 +79,12 @@ public class GuiFormilarioVenue {
 
                 try {
                     // Crea el objeto Venue (ajusta el constructor según tu implementación)
-                   // Ajusta el constructor de Venue para que acepte solo los argumentos necesarios
-                // Usa el constructor correcto según la definición de Venue
-                Venue venue = new Venue( generatedVenueID, nameVenue, selectedCountry, selectedCity, capacity);
+                    // Ajusta el constructor de Venue para que acepte solo los argumentos necesarios
+                    // Usa el constructor correcto según la definición de Venue
+                    Venue venue = new Venue(generatedVenueID, nameVenue, selectedCountry, selectedCity, capacity);
 
-                // Crea el VenueDTO usando los parámetros necesarios (ajusta según el constructor real de VenueDTO)
-                repository.addVenue(new DTOS.VenueDTO(venue.getId(), venue.getName(), venue.getCountry(), venue.getCity(), venue.getCapacity(), address));
+                    // Crea el VenueDTO usando los parámetros necesarios (ajusta según el constructor real de VenueDTO)
+                    repository.addVenue(new VenueDTO(venue.getId(), venue.getName(), venue.getCountry(), venue.getCity(), venue.getCapacity(), address));
 
                     JOptionPane.showMessageDialog(PanelPrincipalFormularioVenue,
                             "Venue creado exitosamente:\nID: " + generatedVenueID +
@@ -108,13 +114,87 @@ public class GuiFormilarioVenue {
         ButtonModifyVenue.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (currentVenue == null) {
+                    JOptionPane.showMessageDialog(null, "Primero debe buscar un venue válido");
+                    return;
+                }
 
+                // Actualizar campos del objeto VenueDTO
+                currentVenue.setName(textFieldIDVenue.getText().trim());
+                currentVenue.setAddress(textFieldAddresVenue.getText().trim());
+                currentVenue.setCountry((Country) comboBoxCountry.getSelectedItem());
+                currentVenue.setCity((City) comboBoxCity.getSelectedItem());
+
+                try {
+                    int capacity = Integer.parseInt(textFieldCapacity.getText().trim());
+                    currentVenue.setCapacity(capacity);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Capacidad inválida. Debe ser un número entero.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Guardar cambios en repositorio
+                venueRepository.updateVenue(currentVenue);
+                JOptionPane.showMessageDialog(null, "✅ Venue modificado correctamente.");
+            }
+        });
+        buttonSearchVenue.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String venueId = textFieldIDVenue.getText().trim();
+                if (venueId.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Por favor ingrese un ID de venue");
+                    return;
+                }
+
+                currentVenue = venueRepository.findById(venueId);
+                if (currentVenue == null) {
+                    JOptionPane.showMessageDialog(null, "Venue no encontrado");
+                    return;
+                }
+
+                // Cargar datos en campos del formulario
+                textFieldNameVenue.setText(currentVenue.getName());
+                textFieldAddresVenue.setText(currentVenue.getAddress());
+                comboBoxCountry.setSelectedItem(currentVenue.getCountry());
+                comboBoxCity.setSelectedItem(currentVenue.getCity());
+                textFieldCapacity.setText(String.valueOf(currentVenue.getCapacity()));
+
+                // Bloquear el ID pero permitir editar los demás campos
+                textFieldNameVenue.setEditable(true);
+                textFieldAddresVenue.setEditable(true);
+                comboBoxCountry.setEnabled(true);
+                comboBoxCity.setEnabled(true);
+                textFieldCapacity.setEditable(true);
+
+                // Habilitar el botón de modificar
+                buttonSearchVenue.setEnabled(true);
             }
         });
         ButtonDeleteVenue.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String id = textFieldIDVenue.getText().trim(); // Asegúrate de tener un JTextField llamado FieldVenueID
 
+                if (id.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Debe ingresar el ID del recinto (Venue).", "Campo requerido", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                VenueDTO dto = venueRepository.findById(id); // Asume que tienes VenueRepository y VenueDTO definidos
+                if (dto == null) {
+                    JOptionPane.showMessageDialog(null, "Recinto no encontrado con ese ID.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                int confirm = JOptionPane.showConfirmDialog(null,
+                        "¿Estás seguro de que deseas eliminar el recinto \"" + dto.getName() + "\"?",
+                        "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    venueRepository.removeVenueById(id); // Método que debes tener implementado
+                    JOptionPane.showMessageDialog(null, "✅ Recinto eliminado correctamente.");
+                }
             }
         });
         comboBoxCountry.addActionListener(new ActionListener() {
@@ -130,6 +210,7 @@ public class GuiFormilarioVenue {
                 comboBoxCity.setModel(cityModel);
             }
         });
+
     }
 
     private void generateEventID() {
@@ -155,7 +236,7 @@ public class GuiFormilarioVenue {
      */
     private void $$$setupUI$$$() {
         PanelPrincipalFormularioVenue = new JPanel();
-        PanelPrincipalFormularioVenue.setLayout(new GridLayoutManager(7, 1, new Insets(0, 0, 0, 0), -1, -1));
+        PanelPrincipalFormularioVenue.setLayout(new GridLayoutManager(8, 1, new Insets(0, 0, 0, 0), -1, -1));
         PanelPrincipalFormularioVenue.setBackground(new Color(-15591660));
         PanelPrincipalFormularioVenue.setForeground(new Color(-330753));
         PanelPrincipalTituloVenue = new JPanel();
@@ -191,7 +272,7 @@ public class GuiFormilarioVenue {
         PanelAddresVenue.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         PanelAddresVenue.setBackground(new Color(-15591660));
         PanelAddresVenue.setEnabled(false);
-        PanelPrincipalFormularioVenue.add(PanelAddresVenue, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        PanelPrincipalFormularioVenue.add(PanelAddresVenue, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         PanelAddresVenue.setBorder(BorderFactory.createTitledBorder(null, "Addres", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         textFieldAddresVenue = new JTextField();
         textFieldAddresVenue.setBackground(new Color(-330753));
@@ -201,7 +282,7 @@ public class GuiFormilarioVenue {
         PanelComboboxLocation.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
         PanelComboboxLocation.setBackground(new Color(-15591660));
         PanelComboboxLocation.setEnabled(false);
-        PanelPrincipalFormularioVenue.add(PanelComboboxLocation, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        PanelPrincipalFormularioVenue.add(PanelComboboxLocation, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         PanelComboboxLocation.setBorder(BorderFactory.createTitledBorder(null, "Seleccione the country and city", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         comboBoxCountry = new JComboBox();
         comboBoxCountry.setBackground(new Color(-330753));
@@ -218,17 +299,17 @@ public class GuiFormilarioVenue {
         PanelCapavityVenue.setBackground(new Color(-15591660));
         PanelCapavityVenue.setEnabled(false);
         PanelCapavityVenue.setForeground(new Color(-15591660));
-        PanelPrincipalFormularioVenue.add(PanelCapavityVenue, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        PanelPrincipalFormularioVenue.add(PanelCapavityVenue, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         PanelCapavityVenue.setBorder(BorderFactory.createTitledBorder(null, "Capacity", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         textFieldCapacity = new JTextField();
         textFieldCapacity.setBackground(new Color(-330753));
         textFieldCapacity.setForeground(new Color(-16777216));
         PanelCapavityVenue.add(textFieldCapacity, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         PanelBotonCreateVenue = new JPanel();
-        PanelBotonCreateVenue.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
+        PanelBotonCreateVenue.setLayout(new GridLayoutManager(1, 4, new Insets(0, 0, 0, 0), -1, -1));
         PanelBotonCreateVenue.setBackground(new Color(-15591660));
         PanelBotonCreateVenue.setForeground(new Color(-330753));
-        PanelPrincipalFormularioVenue.add(PanelBotonCreateVenue, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        PanelPrincipalFormularioVenue.add(PanelBotonCreateVenue, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         buttonCreateVenue = new JButton();
         buttonCreateVenue.setBackground(new Color(-14829228));
         buttonCreateVenue.setForeground(new Color(-16777216));
@@ -238,12 +319,25 @@ public class GuiFormilarioVenue {
         ButtonDeleteVenue.setBackground(new Color(-14829228));
         ButtonDeleteVenue.setForeground(new Color(-16777216));
         ButtonDeleteVenue.setText("Delete Venue");
-        PanelBotonCreateVenue.add(ButtonDeleteVenue, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        PanelBotonCreateVenue.add(ButtonDeleteVenue, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         ButtonModifyVenue = new JButton();
         ButtonModifyVenue.setBackground(new Color(-14829228));
         ButtonModifyVenue.setForeground(new Color(-16777216));
         ButtonModifyVenue.setText("Modify Venue");
         PanelBotonCreateVenue.add(ButtonModifyVenue, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        buttonSearchVenue = new JButton();
+        buttonSearchVenue.setBackground(new Color(-14829228));
+        buttonSearchVenue.setForeground(new Color(-16777216));
+        buttonSearchVenue.setText("SEARCH VENUE");
+        PanelBotonCreateVenue.add(buttonSearchVenue, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        PanelShowVenue = new JPanel();
+        PanelShowVenue.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        PanelShowVenue.setBackground(new Color(-15591660));
+        PanelPrincipalFormularioVenue.add(PanelShowVenue, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        PanelShowVenue.setBorder(BorderFactory.createTitledBorder(null, "Show venue", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+        LabelShowVenue = new JLabel();
+        LabelShowVenue.setText("");
+        PanelShowVenue.add(LabelShowVenue, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
@@ -328,5 +422,27 @@ public class GuiFormilarioVenue {
         return ButtonDeleteVenue;
     }
 
+    public JPanel getPanelShowVenue() {
+        return PanelShowVenue;
+    }
 
+    public JLabel getLabelShowVenue() {
+        return LabelShowVenue;
+    }
+
+    public EventService getEventService() {
+        return eventService;
+    }
+
+    public VenueRepository getRepository() {
+        return repository;
+    }
+
+    public VenueService getVenueService() {
+        return venueService;
+    }
+
+    public String getGeneratedVenueID() {
+        return generatedVenueID;
+    }
 }

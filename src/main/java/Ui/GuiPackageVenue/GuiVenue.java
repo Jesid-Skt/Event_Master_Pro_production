@@ -85,13 +85,52 @@ public class GuiVenue {
         ButtonRemoveVenue.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Instancia del formulario de Venue
+                GuiFormilarioVenue formularioVenue = new GuiFormilarioVenue();
 
+                // Configura los campos y botones visibles para eliminar
+                formularioVenue.getTextFieldIDVenue().setEditable(true);
+                formularioVenue.getButtonDeleteVenue().setVisible(true);
+                formularioVenue.getButtonCreateVenue().setVisible(false);
+                formularioVenue.getButtonModifyVenue().setVisible(false);
+                formularioVenue.getTextFieldAddresVenue().setVisible(false);
+
+                // Ocultar los demás campos
+                formularioVenue.getPanelNameVenue().setVisible(false);
+                formularioVenue.getPanelComboboxLocation().setVisible(false);
+                formularioVenue.getPanelCapavityVenue().setVisible(false);
+
+                // Mostrar formulario
+                JFrame frame = new JFrame("Delete Venue");
+                frame.setContentPane(formularioVenue.getPanelPrincipalFormularioVenue());
+                frame.pack();
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
             }
         });
         ButtonShowVenue.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                GuiFormilarioVenue formularioVenue = new GuiFormilarioVenue();
 
+                // Configura los campos y botones visibles para eliminar
+                formularioVenue.getTextFieldIDVenue().setEditable(true);
+                formularioVenue.getButtonDeleteVenue().setVisible(true);
+                formularioVenue.getButtonCreateVenue().setVisible(false);
+                formularioVenue.getButtonModifyVenue().setVisible(false);
+                formularioVenue.getTextFieldAddresVenue().setVisible(false);
+
+                // Ocultar los demás campos
+                formularioVenue.getPanelNameVenue().setVisible(false);
+                formularioVenue.getPanelComboboxLocation().setVisible(false);
+                formularioVenue.getPanelCapavityVenue().setVisible(false);
+
+                // Mostrar formulario
+                JFrame frame = new JFrame("Show Venue");
+                frame.setContentPane(formularioVenue.getPanelPrincipalFormularioVenue());
+                frame.pack();
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
             }
         });
         ButtonShowVenueDetails.addActionListener(new ActionListener() {

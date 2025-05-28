@@ -3,7 +3,7 @@ package Ui.GuiPackageEvent;
 import DTOS.EventDTO;
 import Repository.EventRepository;
 import Repository.VenueRepository;
-import Ui.GuiPackageEvent.GuiPackageFormulariosEvent.CalendarEvents;
+import Ui.GuiPackageEvent.GuiPackageFormulariosEvent.CalendarView;
 import Ui.GuiPackageEvent.GuiPackageFormulariosEvent.GuiFormularioCreateEvent;
 import Services.EventService;
 import Services.VenueService;
@@ -34,6 +34,7 @@ public class GuiEvent {
     private JButton createEventButton;
     private JPanel PanelDinamicoEvent;
     private EventService eventService;
+    private CalendarView.CalendarEvents calendarEvents = new CalendarView.CalendarEvents();
 
 
     public GuiEvent() {
@@ -41,6 +42,9 @@ public class GuiEvent {
         VenueService venueService = new VenueService(venueRepository);
         EventRepository eventRepository = new EventRepository();
         this.eventService = new EventService(venueService, eventRepository);
+        CalendarView calendarView = new CalendarView();
+
+        // Inicializa componentes (ejemplo)
 
 // Verificación de carga del archivo events.json
         List<EventDTO> eventos = eventRepository.getAllEventsAsList();
@@ -107,6 +111,12 @@ public class GuiEvent {
                 // Cambia la visibilidad de los componentes
                 GuiFormularioCreateEvent formularioEvent = new GuiFormularioCreateEvent();
                 formularioEvent.getFieldEventID().setVisible(true);
+                formularioEvent.getFIeldVenueID().setEditable(false);
+                formularioEvent.getButtonModifyEvent().setVisible(true);
+                formularioEvent.getCreateEventButton().setVisible(false);
+                formularioEvent.getButtonDeleteEvent().setVisible(false);
+                formularioEvent.getPanelVenueId().setVisible(false);
+                formularioEvent.getLabelTituloPrincipal().setText("Modify Event");
 
                 JFrame frame = new JFrame("Modify Event");
                 frame.setContentPane(formularioEvent.getPanelFolmularioCreateEvent());
@@ -126,12 +136,17 @@ public class GuiEvent {
                 formularioEvent.getFieldEventID().setEditable(true);
                 formularioEvent.getButtonDeleteEvent().setVisible(true);
                 formularioEvent.getButtonModifyEvent().setVisible(false);
+                formularioEvent.getCreateEventButton().setVisible(false);
+                formularioEvent.getPanelEventName().setVisible(false);
+                formularioEvent.getPanelVenueId().setVisible(false);
+                formularioEvent.getPanelStartDate().setVisible(false);
+                formularioEvent.getPanelEndDate().setVisible(false);
+                formularioEvent.getPanelComboboxEvenType().setVisible(false);
 
                 JFrame frame = new JFrame("Delete Event");
                 frame.setContentPane(formularioEvent.getPanelFolmularioCreateEvent());
                 frame.pack();
                 frame.setLocationRelativeTo(null);
-                frame.setSize(500, 500);
                 frame.setVisible(true);
             }
         });
@@ -139,15 +154,28 @@ public class GuiEvent {
             @Override
             public void actionPerformed(ActionEvent e) {
                 EventRepository repository = new EventRepository();
-                CalendarEvents calendarEvents = new CalendarEvents();
+                List<EventDTO> eventos = repository.getAllEventsAsList();
+
+                if (eventos.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "No hay eventos para mostrar en el calendario.", "Información", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+
+                // Cargar eventos en la tabla
+                calendarEvents.cargarEventosEnCalendario(eventos);
+
+                calendarView.getPanelPrincipalClanderEvents().setBackground(Color.decode("#121714")); // Cambiar color de fondo del panel
+
+                // Crear ventana con el panel principal del calendario
                 JFrame frame = new JFrame("Calendar");
                 frame.setContentPane(calendarEvents.getPanelPrincipalClanderEvents());
                 frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 frame.setLocationRelativeTo(null);
-                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                frame.pack();
                 frame.setVisible(true);
             }
         });
+
     }
 
     {

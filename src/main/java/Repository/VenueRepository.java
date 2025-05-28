@@ -39,6 +39,22 @@ public class VenueRepository {
             e.printStackTrace();
         }
     }
+    public void removeVenueById(String id) {
+        getAllVenues().remove(id);  // Asumiendo que tienes un Map<String, VenueDTO> allVenues
+        saveToFile();          // Método que guarda todos los venues actualizados en el archivo
+    }
+
+    public void updateVenue(VenueDTO updatedVenue) {
+        for (int i = 0; i < venueList.size(); i++) {
+            VenueDTO current = venueList.get(i);
+            if (current.getVenueId().trim().equalsIgnoreCase(updatedVenue.getVenueId().trim())) {
+                venueList.set(i, updatedVenue);  // Reemplaza el venue existente con el actualizado
+                saveToFile();                    // Guarda cambios en el archivo
+                return;
+            }
+        }
+        System.out.println("⚠️ No se encontró el venue con ID: " + updatedVenue.getVenueId());
+    }
 
     public void loadFromFile() {
         venueList.clear();

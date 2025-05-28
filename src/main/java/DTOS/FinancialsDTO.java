@@ -3,13 +3,13 @@ package DTOS;
 public class FinancialsDTO {
     private String financialId;
     private String eventId;
-    private double income;
-    private double expense;
-    private double budget;
+    private Double income;   // Cambiado a Double
+    private Double expense;  // Cambiado a Double
+    private Double budget;   // Cambiado a Double
 
     public FinancialsDTO() {}
 
-    public FinancialsDTO(String financialId, String eventId, double income, double expense, double budget) {
+    public FinancialsDTO(String financialId, String eventId, Double income, Double expense, Double budget) {
         this.financialId = financialId;
         this.eventId = eventId;
         this.income = income;
@@ -33,27 +33,27 @@ public class FinancialsDTO {
         this.eventId = eventId;
     }
 
-    public double getIncome() {
+    public Double getIncome() {
         return income;
     }
 
-    public void setIncome(double income) {
+    public void setIncome(Double income) {
         this.income = income;
     }
 
-    public double getExpense() {
+    public Double getExpense() {
         return expense;
     }
 
-    public void setExpense(double expense) {
+    public void setExpense(Double expense) {
         this.expense = expense;
     }
 
-    public double getBudget() {
+    public Double getBudget() {
         return budget;
     }
 
-    public void setBudget(double budget) {
+    public void setBudget(Double budget) {
         this.budget = budget;
     }
 

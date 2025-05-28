@@ -3,7 +3,7 @@ package Ui.GuiPackageMainMenu;
 import Ui.GuiPackageAccessControl.GuiAccessControl;
 import Ui.GuiPackageArtist.GuiArtist;
 import Ui.GuiPackageEvent.GuiEvent;
-import Ui.GuiPackageFinancilas.GuiFInancials;
+import Ui.GuiPackageFinancilas.GuiFinancials;
 import Ui.GuiPackageTicket.GuiTicket;
 import Ui.GuiPackageVenue.GuiVenue;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -91,13 +91,12 @@ public class GuiMainMenu {
                 JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(PanelPrincipalMainMenu);
                 currentFrame.dispose(); // Cierra la ventana actual
 
-                GuiFInancials guiFInancials = new GuiFInancials();
+                GuiFinancials guiFInancials = new GuiFinancials();
                 JFrame frame = new JFrame("Manage Financials");
                 frame.setContentPane(guiFInancials.getPanelPrincipalFinancials());
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
                 frame.setVisible(true);
-
             }
         });
         manageTicketButton.addActionListener(new ActionListener() {

@@ -43,12 +43,17 @@ public class GuiFormularioCreateEvent {
     private JPanel PanelComboboxEvenType;
     private JPanel PanelEventName;
     private JPanel PanelIDEvent;
+    private JPanel PanelVenueId;
+    private JButton searchEventButton;
     private EventService eventService;
     private VenueService venueService;
     private VenueRepository venueRepository; // Repositorio para manejar venues
     private EventRepository eventRepository = new EventRepository(); // Repositorio para manejar eventos
     private String generatedEventID; // ID único generado para el evento
     private JComboBox<EventType> eventTypeComboBox;
+
+    // 🔽 AQUÍ debes agregarla
+    private EventDTO currentEvent = null;
 
     public GuiFormularioCreateEvent() {
         comboBoxEventType.setModel(new DefaultComboBoxModel<>(EventType.values()));
@@ -60,7 +65,8 @@ public class GuiFormularioCreateEvent {
         eventService = new EventService(venueService, eventRepository);
 
 
-        venueRepository.loadFromFile(); // Asegúrate de que venueRepository esté inicializado
+        venueRepository.loadFromFile();
+        eventRepository.loadFromFile();// Asegúrate de que venueRepository esté inicializado
         // Generar ID único al abrir el formulario
         generatedEventID = eventService.generateUniqueEventID();
         getFieldEventID().setText(generatedEventID);
@@ -127,15 +133,79 @@ public class GuiFormularioCreateEvent {
         buttonDeleteEvent.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String id = FieldEventID.getText().trim();
+                if (id.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Debe ingresar el ID del evento.", "Campo requerido", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
 
+                EventDTO dto = eventRepository.getEventById(id);
+                if (dto == null) {
+                    JOptionPane.showMessageDialog(null, "Evento no encontrado con ese ID.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                int confirm = JOptionPane.showConfirmDialog(null,
+                        "¿Estás seguro de que deseas eliminar el evento \"" + dto.getEventName() + "\"?",
+                        "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    eventRepository.removeEventById(id);
+                    JOptionPane.showMessageDialog(null, "✅ Evento eliminado correctamente.");
+                    // Limpiar campos si deseas
+                    clearFields();
+                }
             }
         });
         buttonModifyEvent.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (currentEvent == null) {
+                    JOptionPane.showMessageDialog(null, "Primero debe buscar un evento válido");
+                    return;
+                }
+                // Actualizar campos modificables en el objeto event
+                currentEvent.setEventName(FieldEventName.getText().trim());
+                currentEvent.setStartDate(formattedFieldStartDate.getText().trim());
+                currentEvent.setEndDate(formattedFieldEndDate.getText().trim());
 
+                // Actualizar evento en repositorio (guardará en archivo)
+                eventRepository.updateEvent(currentEvent);
+
+                JOptionPane.showMessageDialog(null, "Evento modificado y guardado correctamente");
+
+                // Opcional: limpiar formulario o cerrar ventana
             }
         });
+        searchEventButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String eventId = FieldEventID.getText().trim();
+                if (eventId.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Por favor ingrese un ID de evento");
+                    return;
+                }
+                currentEvent = eventRepository.getEventById(eventId);
+                if (currentEvent == null) {
+                    JOptionPane.showMessageDialog(null, "Evento no encontrado");
+                    return;
+                }
+                // Cargar datos en campos
+                FieldEventName.setText(currentEvent.getEventName());
+                formattedFieldStartDate.setText(currentEvent.getStartDate());
+                formattedFieldEndDate.setText(currentEvent.getEndDate());
+
+                // Solo permitir modificar nombre y fechas
+                FieldEventID.setEditable(false);
+                FieldEventName.setEditable(true);
+                formattedFieldStartDate.setEditable(true);
+                formattedFieldEndDate.setEditable(true);
+
+                // Habilitar botón modificar, si estaba deshabilitado
+                buttonModifyEvent.setEnabled(true);
+            }
+        });
+        buttonModifyEvent.setEnabled(false);
     }
 
     private void setupPlaceholders() {
@@ -191,6 +261,17 @@ public class GuiFormularioCreateEvent {
         getFieldEventID().setText(generatedEventID);
     }
 
+    private void clearFields() {
+        FieldEventID.setText("");
+        FieldEventName.setText("");
+        comboBoxEventType.setSelectedIndex(0);
+        formattedFieldStartDate.setText("");
+        formattedFieldEndDate.setText("");
+        FIeldVenueID.setText("");
+        // Y los demás campos si tienes
+    }
+
+
     public JLabel getLabelEventID() {
         return LabelEventID;
     }
@@ -226,20 +307,22 @@ public class GuiFormularioCreateEvent {
         PanelFolmularioCreateEvent.setLayout(new GridLayoutManager(15, 1, new Insets(0, 0, 0, 0), -1, -1));
         PanelFolmularioCreateEvent.setBackground(new Color(-15591660));
         PanelFolmularioCreateEvent.setForeground(new Color(-330753));
-        final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        panel1.setBackground(new Color(-15591660));
-        panel1.setEnabled(false);
-        Font panel1Font = this.$$$getFont$$$(null, -1, 22, panel1.getFont());
-        if (panel1Font != null) panel1.setFont(panel1Font);
-        panel1.setForeground(new Color(-330753));
-        PanelFolmularioCreateEvent.add(panel1, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        panel1.setBorder(BorderFactory.createTitledBorder(null, "ID Venue", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+        PanelVenueId = new JPanel();
+        PanelVenueId.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+        PanelVenueId.setBackground(new Color(-15591660));
+        PanelVenueId.setEnabled(false);
+        Font PanelVenueIdFont = this.$$$getFont$$$(null, -1, 22, PanelVenueId.getFont());
+        if (PanelVenueIdFont != null) PanelVenueId.setFont(PanelVenueIdFont);
+        PanelVenueId.setForeground(new Color(-330753));
+        PanelFolmularioCreateEvent.add(PanelVenueId, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        PanelVenueId.setBorder(BorderFactory.createTitledBorder(null, "ID Venue", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         FIeldVenueID = new JTextField();
         FIeldVenueID.setBackground(new Color(-330753));
         FIeldVenueID.setForeground(new Color(-16777216));
         FIeldVenueID.setText("Ingrese el ID del venue");
-        panel1.add(FIeldVenueID, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        PanelVenueId.add(FIeldVenueID, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        PanelVenueId.add(spacer1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         PanelIDEvent = new JPanel();
         PanelIDEvent.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         PanelIDEvent.setBackground(new Color(-15591660));
@@ -272,7 +355,8 @@ public class GuiFormularioCreateEvent {
         PanelComboboxEvenType.setBorder(BorderFactory.createTitledBorder(null, "Event Type", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         comboBoxEventType = new JComboBox();
         comboBoxEventType.setBackground(new Color(-330753));
-        comboBoxEventType.setForeground(new Color(-16777216));
+        comboBoxEventType.setEditable(true);
+        comboBoxEventType.setForeground(new Color(-330753));
         PanelComboboxEvenType.add(comboBoxEventType, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         PanelStartDate = new JPanel();
         PanelStartDate.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
@@ -297,39 +381,44 @@ public class GuiFormularioCreateEvent {
         formattedFieldEndDate.setForeground(new Color(-16777216));
         formattedFieldEndDate.setText("Ejemplo: yyyy-MM-dd HH:mm");
         PanelEndDate.add(formattedFieldEndDate, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        final JPanel panel2 = new JPanel();
-        panel2.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
-        panel2.setBackground(new Color(-15591660));
-        PanelFolmularioCreateEvent.add(panel2, new GridConstraints(14, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JPanel panel1 = new JPanel();
+        panel1.setLayout(new GridLayoutManager(1, 4, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.setBackground(new Color(-15591660));
+        PanelFolmularioCreateEvent.add(panel1, new GridConstraints(14, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         createEventButton = new JButton();
         createEventButton.setBackground(new Color(-14829228));
         createEventButton.setForeground(new Color(-330753));
         createEventButton.setText("Create event");
-        panel2.add(createEventButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(createEventButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         buttonModifyEvent = new JButton();
         buttonModifyEvent.setBackground(new Color(-14829228));
         buttonModifyEvent.setForeground(new Color(-16777216));
         buttonModifyEvent.setText("Modify Event");
-        panel2.add(buttonModifyEvent, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(buttonModifyEvent, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         buttonDeleteEvent = new JButton();
         buttonDeleteEvent.setBackground(new Color(-14829228));
         buttonDeleteEvent.setForeground(new Color(-16777216));
         buttonDeleteEvent.setText("Delete Event");
-        panel2.add(buttonDeleteEvent, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer1 = new Spacer();
-        PanelFolmularioCreateEvent.add(spacer1, new GridConstraints(13, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        panel1.add(buttonDeleteEvent, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        searchEventButton = new JButton();
+        searchEventButton.setBackground(new Color(-14829228));
+        searchEventButton.setForeground(new Color(-16777216));
+        searchEventButton.setText("Search event");
+        panel1.add(searchEventButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
-        PanelFolmularioCreateEvent.add(spacer2, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        PanelFolmularioCreateEvent.add(spacer2, new GridConstraints(13, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
-        PanelFolmularioCreateEvent.add(spacer3, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        PanelFolmularioCreateEvent.add(spacer3, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer4 = new Spacer();
-        PanelFolmularioCreateEvent.add(spacer4, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        PanelFolmularioCreateEvent.add(spacer4, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer5 = new Spacer();
-        PanelFolmularioCreateEvent.add(spacer5, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        PanelFolmularioCreateEvent.add(spacer5, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer6 = new Spacer();
-        PanelFolmularioCreateEvent.add(spacer6, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        PanelFolmularioCreateEvent.add(spacer6, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer7 = new Spacer();
-        PanelFolmularioCreateEvent.add(spacer7, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        PanelFolmularioCreateEvent.add(spacer7, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final Spacer spacer8 = new Spacer();
+        PanelFolmularioCreateEvent.add(spacer8, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         PanelTituloPrincipal = new JPanel();
         PanelTituloPrincipal.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         PanelTituloPrincipal.setBackground(new Color(-15591660));
@@ -436,5 +525,33 @@ public class GuiFormularioCreateEvent {
 
     public JComboBox<EventType> getEventTypeComboBox() {
         return eventTypeComboBox;
+    }
+
+    public JPanel getPanelStartDate() {
+        return PanelStartDate;
+    }
+
+    public JPanel getPanelVenueId() {
+        return PanelVenueId;
+    }
+
+    public JPanel getPanelIDEvent() {
+        return PanelIDEvent;
+    }
+
+    public JPanel getPanelEventName() {
+        return PanelEventName;
+    }
+
+    public JPanel getPanelComboboxEvenType() {
+        return PanelComboboxEvenType;
+    }
+
+    public JPanel getPanelEndDate() {
+        return PanelEndDate;
+    }
+
+    public JButton getSearchEventButton() {
+        return searchEventButton;
     }
 }
