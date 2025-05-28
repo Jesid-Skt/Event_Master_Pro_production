@@ -16,7 +16,6 @@
         private final Map<String, Event> events = new HashMap<>();
         private final EventRepository repository;
         private final Map<String, Double> budgets = new HashMap<>();
-        private final Map<String, List<String>> ticketSales = new HashMap<>();
         private final VenueService venueService;
 
         public EventService(VenueService venueService, EventRepository repository) {
@@ -82,19 +81,6 @@
         public boolean categorizeEvent(String id, EventType type) {
             if (!events.containsKey(id)) return false;
             events.get(id).setType(type);
-            return true;
-        }
-
-        public boolean createTicketType(String id, String ticketType) {
-            if (!events.containsKey(id)) return false;
-            ticketSales.putIfAbsent(id, new ArrayList<>());
-            ticketSales.get(id).add(ticketType);
-            return true;
-        }
-
-        public boolean registerSale(String id, String soldTicket) {
-            if (!ticketSales.containsKey(id)) return false;
-            ticketSales.get(id).add(soldTicket);
             return true;
         }
 

@@ -28,10 +28,6 @@ public class VenueRepository {
         return null;
     }
 
-    public boolean venueExists(String id) {
-        return findById(id) != null;
-    }
-
     public List<VenueDTO> getAllVenues() {
         return venueList;
     }

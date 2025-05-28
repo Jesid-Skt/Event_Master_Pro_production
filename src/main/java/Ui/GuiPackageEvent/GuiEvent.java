@@ -1,5 +1,6 @@
 package Ui.GuiPackageEvent;
 
+import DTOS.EventDTO;
 import Repository.EventRepository;
 import Repository.VenueRepository;
 import Ui.GuiPackageEvent.GuiPackageFormulariosEvent.CalendarEvents;
@@ -15,6 +16,7 @@ import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Locale;
@@ -38,10 +40,18 @@ public class GuiEvent {
         VenueRepository venueRepository = new VenueRepository();
         VenueService venueService = new VenueService(venueRepository);
         EventRepository eventRepository = new EventRepository();
-        EventService eventService = new EventService(venueService, eventRepository);
+        this.eventService = new EventService(venueService, eventRepository);
 
-
-
+// Verificación de carga del archivo events.json
+        List<EventDTO> eventos = eventRepository.getAllEventsAsList();
+        if (eventos.isEmpty()) {
+            System.out.println("No se cargaron eventos. Verifica el archivo events.json.");
+        } else {
+            System.out.println("Eventos cargados:");
+            for (EventDTO e : eventos) {
+                System.out.println("ID: " + e.getEventId() + " - Nombre: " + e.getEventName());
+            }
+        }
 
 
         exitButton.addActionListener(new ActionListener() {
@@ -78,32 +88,33 @@ public class GuiEvent {
             public void actionPerformed(ActionEvent e) {
                 // Crea una nueva instancia de la ventana principal
                 GuiFormularioCreateEvent formularioEvent = new GuiFormularioCreateEvent();
-                formularioEvent.getFieldEventID().setVisible(true);
+                formularioEvent.getFieldEventID().setEditable(false);
+                formularioEvent.getButtonDeleteEvent().setVisible(false);
+                formularioEvent.getButtonModifyEvent().setVisible(false);
+
 
                 JFrame frame = new JFrame("Create Event");
                 frame.setContentPane(formularioEvent.getPanelFolmularioCreateEvent());
                 frame.pack();
                 frame.setLocationRelativeTo(null);
                 frame.setSize(500, 500);
-                formularioEvent.getFieldEventID().setEditable(false);
                 frame.setVisible(true);
             }
         });
         modifyEventButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                GuiFormularioCreateEvent guiFormularioCreateEvent = new GuiFormularioCreateEvent();
-
                 // Cambia la visibilidad de los componentes
                 GuiFormularioCreateEvent formularioEvent = new GuiFormularioCreateEvent();
                 formularioEvent.getFieldEventID().setVisible(true);
 
-                JFrame frame = new JFrame("Create Event");
+                JFrame frame = new JFrame("Modify Event");
                 frame.setContentPane(formularioEvent.getPanelFolmularioCreateEvent());
                 frame.pack();
                 frame.setLocationRelativeTo(null);
                 frame.setSize(500, 500);
-                formularioEvent.getFieldEventID().setEditable(false);
+                formularioEvent.getFIeldVenueID().setEditable(false);
+                formularioEvent.getFieldEventID().setEditable(true);
                 frame.setVisible(true);
             }
         });
@@ -111,15 +122,17 @@ public class GuiEvent {
         deleteEventButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String nombreEvento = JOptionPane.showInputDialog(null, "Ingresa el nombre del evento a eliminar:");
-                if (nombreEvento != null && !nombreEvento.trim().isEmpty()) {
-                    boolean eliminado = eventService.deleteEventByName(nombreEvento.trim());
-                    if (eliminado) {
-                        JOptionPane.showMessageDialog(null, "Evento eliminado correctamente.");
-                    } else {
-                        JOptionPane.showMessageDialog(null, "No se encontró un evento con ese nombre.");
-                    }
-                }
+                GuiFormularioCreateEvent formularioEvent = new GuiFormularioCreateEvent();
+                formularioEvent.getFieldEventID().setEditable(true);
+                formularioEvent.getButtonDeleteEvent().setVisible(true);
+                formularioEvent.getButtonModifyEvent().setVisible(false);
+
+                JFrame frame = new JFrame("Delete Event");
+                frame.setContentPane(formularioEvent.getPanelFolmularioCreateEvent());
+                frame.pack();
+                frame.setLocationRelativeTo(null);
+                frame.setSize(500, 500);
+                frame.setVisible(true);
             }
         });
         viewCalendarButton.addActionListener(new ActionListener() {

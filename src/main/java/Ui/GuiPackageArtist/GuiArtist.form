@@ -3,7 +3,7 @@
   <grid id="27dc6" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="1209" height="504"/>
+      <xy x="20" y="20" width="1214" height="504"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -45,7 +45,7 @@
               </vspacer>
             </children>
           </grid>
-          <grid id="9e63d" binding="JPanelMenuArtist" layout-manager="GridLayoutManager" row-count="13" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="9e63d" binding="JPanelMenuArtist" layout-manager="GridLayoutManager" row-count="10" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="2" indent="0" use-parent-layout="false">
@@ -59,7 +59,7 @@
             <children>
               <component id="390d0" class="javax.swing.JButton" binding="exitButton" default-binding="true">
                 <constraints>
-                  <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <background color="-14829228"/>
@@ -70,7 +70,7 @@
               </component>
               <component id="a940e" class="javax.swing.JButton" binding="backToMainMenuButton" default-binding="true">
                 <constraints>
-                  <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <background color="-14829228"/>
@@ -81,7 +81,7 @@
               </component>
               <component id="6e1da" class="javax.swing.JButton" binding="listArtistsButton" default-binding="true">
                 <constraints>
-                  <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <background color="-14829228"/>
@@ -92,7 +92,7 @@
               </component>
               <component id="27ec3" class="javax.swing.JButton" binding="showArtistDetailsButton" default-binding="true">
                 <constraints>
-                  <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <background color="-14829228"/>
@@ -101,47 +101,14 @@
                   <text value=" Show Artist Details"/>
                 </properties>
               </component>
-              <component id="e3f2f" class="javax.swing.JButton" binding="showTechnicalRequirementsButton" default-binding="true">
-                <constraints>
-                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <background color="-14829228"/>
-                  <enabled value="true"/>
-                  <foreground color="-330753"/>
-                  <text value="Show Technical Requirements"/>
-                </properties>
-              </component>
-              <component id="67773" class="javax.swing.JButton" binding="showInformationContactOfButton" default-binding="true">
-                <constraints>
-                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <background color="-14829228"/>
-                  <enabled value="true"/>
-                  <foreground color="-330753"/>
-                  <text value="Show information contact of Artist"/>
-                </properties>
-              </component>
-              <component id="9996f" class="javax.swing.JButton" binding="addArtistParticipationButton" default-binding="true">
-                <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <background color="-14829228"/>
-                  <enabled value="true"/>
-                  <foreground color="-330753"/>
-                  <text value=" Add Artist Participation"/>
-                </properties>
-              </component>
               <vspacer id="1473c">
                 <constraints>
-                  <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                  <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                 </constraints>
               </vspacer>
               <vspacer id="e28db">
                 <constraints>
-                  <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                  <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                 </constraints>
               </vspacer>
               <component id="6b39" class="javax.swing.JButton" default-binding="true">
