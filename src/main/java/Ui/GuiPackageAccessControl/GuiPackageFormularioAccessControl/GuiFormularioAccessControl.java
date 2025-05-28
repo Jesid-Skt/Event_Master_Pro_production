@@ -3,6 +3,7 @@ package Ui.GuiPackageAccessControl.GuiPackageFormularioAccessControl;
 import DTOS.EventDTO;
 import Enums.TicketType;
 import Repository.EventRepository;
+import Repository.VenueRepository;
 import Services.AccessControlService;
 import Services.EventService;
 import Services.VenueService;
@@ -47,9 +48,19 @@ public class GuiFormularioAccessControl {
     private JPanel PanelShowAttendee;
     private JLabel LabelShowAllAttendee;
     private AccessControlService accessControlService = new AccessControlService();
-    private EventService eventService = new EventService(new VenueService(), new EventRepository());
+    private VenueService venueService;
+    private  EventService eventService;// crea el servicio
+    // crea el repositorio
+
 
     public GuiFormularioAccessControl() {
+
+        VenueRepository venueRepository = new VenueRepository();
+        this.venueService = new VenueService(venueRepository);
+
+        EventRepository eventRepository = new EventRepository();
+        this.eventService = new EventService(this.venueService, eventRepository);
+
             comboBoxTipoTicket.setModel(new DefaultComboBoxModel<>(TicketType.values()));
 
             List<EventDTO> eventos = eventService.getAllEvents();

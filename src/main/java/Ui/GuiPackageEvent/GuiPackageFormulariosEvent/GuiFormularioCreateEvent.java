@@ -1,8 +1,11 @@
 package Ui.GuiPackageEvent.GuiPackageFormulariosEvent;
 
 import DTOS.EventDTO;
+import DTOS.VenueDTO;
 import Enums.EventType;
+import Model.EventPackage.Venue;
 import Repository.EventRepository;
+import Repository.VenueRepository;
 import Services.EventService;
 import Services.VenueService;
 import Model.EventPackage.Event;
@@ -33,6 +36,7 @@ public class GuiFormularioCreateEvent {
     private JLabel formCreateEventLabel;
     private EventService eventService;
     private VenueService venueService;
+    private VenueRepository venueRepository; // Repositorio para manejar venues
     private EventRepository eventRepository = new EventRepository(); // Repositorio para manejar eventos
     private String generatedEventID; // ID único generado para el evento
     private JComboBox<EventType> eventTypeComboBox;
@@ -41,14 +45,19 @@ public class GuiFormularioCreateEvent {
         comboBoxEventType.setModel(new DefaultComboBoxModel<>(EventType.values()));
 
         // Instanciar servicios
-        venueService = new VenueService();
-        eventService = new EventService(new VenueService(), new EventRepository());
+        venueRepository = new VenueRepository();
+        venueService = new VenueService(venueRepository);
+        eventRepository = new EventRepository();
+        eventService = new EventService(venueService, eventRepository);
 
+
+        venueRepository.loadFromFile(); // Asegúrate de que venueRepository esté inicializado
         // Generar ID único al abrir el formulario
         generatedEventID = eventService.generateUniqueEventID();
         getFieldEventID().setText(generatedEventID);
 
         createEventButton.addActionListener(e -> {
+            // Cargar los datos de los recintos desde el archivo
             String venueID = FIeldVenueID.getText().trim();
             String eventName = FieldEventName.getText().trim();
             EventType eventType = (EventType) comboBoxEventType.getSelectedItem();
@@ -61,20 +70,24 @@ public class GuiFormularioCreateEvent {
                 return;
             }
 
-            if (!venueService.venueExists(venueID)) {
+            // Obtener el Venue (modelo)
+            Venue venue = venueService.getVenueById(venueID);
+
+            if (venue == null) {
                 JOptionPane.showMessageDialog(null, "El ID del recinto no existe.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            EventDTO dto = new EventDTO(generatedEventID, eventName, eventType.name(), startDateTimeStr, endDateTimeStr, venueID);
+            // Convertir Venue (modelo) a VenueDTO
+            VenueDTO venueDTO = VenueDTO.fromVenue(venue);
+            EventDTO dto = new EventDTO(generatedEventID, eventName, eventType.name(), startDateTimeStr, endDateTimeStr, venueDTO);
 
             try {
-                // Guardar el evento directamente en el repositorio
                 eventRepository.addEvent(dto);
 
                 JOptionPane.showMessageDialog(null, "Evento creado exitosamente con ID: " + dto.getEventId());
 
-                // Limpiar campos
+                // Limpiar campos y restablecer placeholders
                 FIeldVenueID.setText("Ingrese el ID del venue");
                 FIeldVenueID.setForeground(Color.white);
 
@@ -89,7 +102,7 @@ public class GuiFormularioCreateEvent {
 
                 comboBoxEventType.setSelectedIndex(0);
 
-                // Generar nuevo ID para un posible nuevo evento
+                // Generar nuevo ID para futuro evento
                 generatedEventID = eventService.generateUniqueEventID();
                 getFieldEventID().setText(generatedEventID);
 
@@ -97,6 +110,8 @@ public class GuiFormularioCreateEvent {
                 JOptionPane.showMessageDialog(null, "Error al crear el evento: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+
+
         // Listeners para limpiar placeholder al hacer click
         setupPlaceholders();
     }
@@ -218,6 +233,8 @@ public class GuiFormularioCreateEvent {
         PanelFolmularioCreateEvent.add(panel4, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         panel4.setBorder(BorderFactory.createTitledBorder(null, "ID Event", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         FieldEventID = new JTextField();
+        FieldEventID.setEditable(false);
+        FieldEventID.setEnabled(true);
         panel4.add(FieldEventID, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JPanel panel5 = new JPanel();
         panel5.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));

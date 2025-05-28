@@ -11,7 +11,7 @@ package Repository;
         public class FinancialRepository {
             private final Gson gson = new Gson();
             private List<FinancialsDTO> financialsList = new ArrayList<>();
-            private final String FILE_PATH = "financials.txt";
+            private final String FILE_PATH = "financials.json";
 
             public void addFinancial(FinancialsDTO financial) {
                 financialsList.add(financial);

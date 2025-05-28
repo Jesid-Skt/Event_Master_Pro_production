@@ -1,6 +1,7 @@
 package Ui.GuiPackageEvent;
 
 import Repository.EventRepository;
+import Repository.VenueRepository;
 import Ui.GuiPackageEvent.GuiPackageFormulariosEvent.CalendarEvents;
 import Ui.GuiPackageEvent.GuiPackageFormulariosEvent.GuiFormularioCreateEvent;
 import Services.EventService;
@@ -34,7 +35,14 @@ public class GuiEvent {
 
 
     public GuiEvent() {
-        this.eventService = new EventService(new VenueService(), new EventRepository());
+        VenueRepository venueRepository = new VenueRepository();
+        VenueService venueService = new VenueService(venueRepository);
+        EventRepository eventRepository = new EventRepository();
+        EventService eventService = new EventService(venueService, eventRepository);
+
+
+
+
 
         exitButton.addActionListener(new ActionListener() {
             @Override
@@ -68,7 +76,6 @@ public class GuiEvent {
         createEventButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 // Crea una nueva instancia de la ventana principal
                 GuiFormularioCreateEvent formularioEvent = new GuiFormularioCreateEvent();
                 formularioEvent.getFieldEventID().setVisible(true);
@@ -88,17 +95,15 @@ public class GuiEvent {
                 GuiFormularioCreateEvent guiFormularioCreateEvent = new GuiFormularioCreateEvent();
 
                 // Cambia la visibilidad de los componentes
-                guiFormularioCreateEvent.getLabelEventID().setVisible(false);
-                guiFormularioCreateEvent.getFieldEventID().setVisible(true);
-                guiFormularioCreateEvent.getCreateEventButton().setText("Modify Event");
-                guiFormularioCreateEvent.getFormCreateEventLabel().setText("Modify Event");
+                GuiFormularioCreateEvent formularioEvent = new GuiFormularioCreateEvent();
+                formularioEvent.getFieldEventID().setVisible(true);
 
-                JFrame frame = new JFrame("Modificar Evento");
-                frame.setContentPane(guiFormularioCreateEvent.getPanelFolmularioCreateEvent());
-                frame.setLocationRelativeTo(null);
-                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                JFrame frame = new JFrame("Create Event");
+                frame.setContentPane(formularioEvent.getPanelFolmularioCreateEvent());
                 frame.pack();
+                frame.setLocationRelativeTo(null);
                 frame.setSize(500, 500);
+                formularioEvent.getFieldEventID().setEditable(false);
                 frame.setVisible(true);
             }
         });

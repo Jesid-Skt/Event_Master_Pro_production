@@ -46,9 +46,6 @@ public class PruebasGUIS {
             FinancialRepository financialRepository = new FinancialRepository();
             financialRepository.saveToFile();
 
-
-
-
             // Repite para otros repositorios que manejen archivos
 
             // Crea la ventana principal

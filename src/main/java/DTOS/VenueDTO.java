@@ -1,18 +1,37 @@
 package DTOS;
 
+import Enums.City;
+import Enums.Country;
+import Model.EventPackage.Venue;
+
 public class VenueDTO {
     private String venueId;
     private String name;
-    private String location;
+    private String address;
+    private Country country;
+    private City city;
     private int capacity;
 
     public VenueDTO() {}
 
-    public VenueDTO(String venueId, String name, String location, int capacity) {
+    public VenueDTO(String venueId, String name, Country country, City city, int capacity, String address) {
         this.venueId = venueId;
         this.name = name;
-        this.location = location;
+        this.address = address;
+        this.country = country;
+        this.city = city;
         this.capacity = capacity;
+    }
+
+    public static VenueDTO fromVenue(Venue venue) {
+        return new VenueDTO(
+                venue.getId(),
+                venue.getName(),
+                venue.getCountry(),
+                venue.getCity(),
+                venue.getCapacity(),
+                venue.getAddress()
+        );
     }
 
     public String getVenueId() {
@@ -31,12 +50,28 @@ public class VenueDTO {
         this.name = name;
     }
 
-    public String getLocation() {
-        return location;
+    public String getAddress() {
+        return address;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
+    }
+
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
     }
 
     public int getCapacity() {
@@ -52,9 +87,10 @@ public class VenueDTO {
         return "VenueDTO{" +
                 "venueId='" + venueId + '\'' +
                 ", name='" + name + '\'' +
-                ", location='" + location + '\'' +
+                ", address='" + address + '\'' +
+                ", country=" + country +
+                ", city=" + city +
                 ", capacity=" + capacity +
                 '}';
     }
 }
-

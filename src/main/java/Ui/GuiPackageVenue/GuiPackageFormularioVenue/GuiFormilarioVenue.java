@@ -37,12 +37,14 @@ public class GuiFormilarioVenue {
     private JButton ButtonModifyVenue;
     private JButton ButtonDeleteVenue;
     private EventService eventService;
-    private VenueService venueService = new VenueService();
+    private VenueService venueService;
     private VenueRepository repository = new VenueRepository();
     private String generatedVenueID;
 
     public GuiFormilarioVenue() {
-        eventService = new EventService(new VenueService(), new EventRepository());
+
+        VenueRepository venueRepository = new VenueRepository();
+        this.venueService = new VenueService(venueRepository);
         // Genera el ID solo una vez al abrir el formulario
         generatedVenueID = venueService.generateUniqueVenueID();
         getTextFieldIDVenue().setText(generatedVenueID);
@@ -73,10 +75,10 @@ public class GuiFormilarioVenue {
                     // Crea el objeto Venue (ajusta el constructor según tu implementación)
                    // Ajusta el constructor de Venue para que acepte solo los argumentos necesarios
                 // Usa el constructor correcto según la definición de Venue
-                Venue venue = new Venue(generatedVenueID, nameVenue, selectedCountry, selectedCity, capacity);
+                Venue venue = new Venue( generatedVenueID, nameVenue, selectedCountry, selectedCity, capacity);
 
                 // Crea el VenueDTO usando los parámetros necesarios (ajusta según el constructor real de VenueDTO)
-                repository.saveToFile(new DTOS.VenueDTO(generatedVenueID, nameVenue, selectedCountry + ", " + selectedCity, capacity));
+                repository.addVenue(new DTOS.VenueDTO(venue.getId(), venue.getName(), venue.getCountry(), venue.getCity(), venue.getCapacity(), address));
 
                     JOptionPane.showMessageDialog(PanelPrincipalFormularioVenue,
                             "Venue creado exitosamente:\nID: " + generatedVenueID +

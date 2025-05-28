@@ -1,22 +1,32 @@
 package Services;
 
+import DTOS.VenueDTO;
 import Enums.City;
 import Enums.Country;
 import Model.EventPackage.Location;
 import Model.EventPackage.Venue;
+import Repository.VenueRepository;
 
 import java.util.*;
-
-/**
- * Clase que gestiona los venues.
- * Permite crear, modificar y eliminar venues y sus disponibilidades.
- */
 
 public class VenueService {
 
     private final Map<String, Venue> venues = new HashMap<>();
+    private final VenueRepository venueRepository;
 
-    // Crear un venue a partir de datos recibidos
+    public VenueService(VenueRepository venueRepository) {
+        this.venueRepository = venueRepository;
+        loadVenuesFromRepository(); // Cargar los venues al iniciar
+    }
+
+    private void loadVenuesFromRepository() {
+        venueRepository.loadFromFile();
+        for (VenueDTO dto : venueRepository.getAllVenues()) {
+            Venue venue = Venue.fromDTO(dto);
+            venues.put(venue.getId(), venue);
+        }
+    }
+
     public String createVenue(String name, String address, City city, Country country, int capacity) throws IllegalArgumentException {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Venue name cannot be empty.");
@@ -25,14 +35,19 @@ public class VenueService {
             throw new IllegalArgumentException("Capacity must be greater than 0.");
         }
 
-        String id = UUID.randomUUID().toString().substring(0, 8);
+        String id = generateUniqueVenueID();
         Location location = new Location(address, city, country);
         Venue venue = new Venue(id, name, country, city, capacity);
+        venue.setLocation(location);
+
         venues.put(id, venue);
 
-        return id;  // Retorna el id generado para que la GUI lo muestre si quiere
-    }
+        // Guardar también en el repositorio
+        VenueDTO dto = VenueDTO.fromVenue(venue);
+        venueRepository.addVenue(dto);
 
+        return id;
+    }
 
     public void removeLocation(String venueId) throws NoSuchElementException {
         Venue venue = venues.get(venueId);
@@ -54,8 +69,8 @@ public class VenueService {
             venue.setLocation(locat);
         } else {
             if (address != null && !address.isEmpty()) locat.setAddress(address);
-           if (city != null) locat.setCity(city);
-           if (country != null) locat.setCountry(country);
+            if (city != null) locat.setCity(city);
+            if (country != null) locat.setCountry(country);
         }
     }
 
@@ -64,6 +79,7 @@ public class VenueService {
             throw new NoSuchElementException("Venue not found.");
         }
         venues.remove(venueId);
+        // Si lo deseas, puedes también eliminar del archivo (opcional)
     }
 
     public Venue getVenueById(String id) {
@@ -77,8 +93,8 @@ public class VenueService {
     public Collection<Venue> listVenues() {
         return Collections.unmodifiableCollection(venues.values());
     }
+
     public String generateUniqueVenueID() {
-        // Simple example: UUID
-        return "EVT-" + java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        return "EVT-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 }

@@ -2,6 +2,7 @@ package Repository;
 
 import DTOS.VenueDTO;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.Gson;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -9,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VenueRepository {
-    private final com.google.gson.Gson gson = new com.google.gson.Gson();
+    private final Gson gson = new Gson();
     private List<VenueDTO> venueList = new ArrayList<>();
-    private final String FILE_PATH = "venues.txt";
+    private final String FILE_PATH = "venues.json";
 
     public void addVenue(VenueDTO venue) {
         venueList.add(venue);
@@ -20,11 +21,15 @@ public class VenueRepository {
 
     public VenueDTO findById(String id) {
         for (VenueDTO v : venueList) {
-            if (v.getVenueId().equals(id)) {
+            if (v.getVenueId().trim().equalsIgnoreCase(id.trim())) {
                 return v;
             }
         }
         return null;
+    }
+
+    public boolean venueExists(String id) {
+        return findById(id) != null;
     }
 
     public List<VenueDTO> getAllVenues() {
@@ -54,4 +59,3 @@ public class VenueRepository {
         }
     }
 }
-

@@ -1,24 +1,34 @@
 // src/main/java/DTOS/EventDTO.java
         package DTOS;
 
-        public class EventDTO {
+import Model.EventPackage.Venue;
+
+public class EventDTO {
             private String eventId;
             private String venueId;
             private String eventName;
             private String eventType;
             private String startDate;
             private String endDate;
+            private VenueDTO venue; // Asignar el objeto VenueDTO
 
             public EventDTO() {}
 
-            public EventDTO(String eventId, String eventName, String eventType, String startDate, String endDate, String venueId) {
-                // Asigna los valores a los campos correspondientes
+            public EventDTO(String eventId, String eventName, String eventType, String startDate, String endDate, VenueDTO venue) {
                 this.eventId = eventId;
                 this.eventName = eventName;
                 this.eventType = eventType;
                 this.startDate = startDate;
                 this.endDate = endDate;
-                this.venueId = venueId;
+                this.venue = venue; // Asignar el objeto Venue a partir de VenueDTO
+
+            }
+
+            public VenueDTO getVenue() {
+                return venue;
+            }
+            public void setVenue(VenueDTO venue) {
+                this.venue = venue; // Asignar el objeto Venue a partir de VenueDTO
             }
 
             public String getEventId() {
