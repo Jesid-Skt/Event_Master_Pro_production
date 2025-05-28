@@ -76,7 +76,7 @@ public class GuiFormilarioVenue {
                 Venue venue = new Venue(generatedVenueID, nameVenue, selectedCountry, selectedCity, capacity);
 
                 // Crea el VenueDTO usando los parámetros necesarios (ajusta según el constructor real de VenueDTO)
-                repository.addVenue(new DTOS.VenueDTO(generatedVenueID, nameVenue, selectedCountry + ", " + selectedCity, capacity));
+                repository.saveToFile(new DTOS.VenueDTO(generatedVenueID, nameVenue, selectedCountry + ", " + selectedCity, capacity));
 
                     JOptionPane.showMessageDialog(PanelPrincipalFormularioVenue,
                             "Venue creado exitosamente:\nID: " + generatedVenueID +
