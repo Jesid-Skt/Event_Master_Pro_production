@@ -15,7 +15,6 @@ public class Event {
     private LocalDateTime endDateTime;
     private Venue venue;
     private List<Artist> artists;
-    private Schedule schedule;
     private Budget budget;
 
     public Event(String id, String name, EventType type, LocalDateTime startDateTime, LocalDateTime endDateTime, Venue venue) {
@@ -49,9 +48,6 @@ public class Event {
 
     public List<Artist> getArtists() { return artists; }
     public void setArtists(List<Artist> artists) { this.artists = artists; }
-
-    public Schedule getSchedule() { return schedule; }
-    public void setSchedule(Schedule schedule) { this.schedule = schedule; }
 
     public Budget getBudget() { return budget; }
     public void setBudget(Budget budget) { this.budget = budget; }

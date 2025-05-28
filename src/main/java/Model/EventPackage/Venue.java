@@ -1,22 +1,37 @@
 package Model.EventPackage;
 
 
+import Enums.City;
+import Enums.Country;
+
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
     public class Venue {
         private String id;
         private String name;
-        private Location location;
+        private Country country;
+        private City city;
         private int capacity;
-        private List<Availability> availabilities;
 
-        public Venue(String id, String name, Location location, int capacity) {
+        public Venue(String id, String name, Country country, City city , int capacity) {
             this.id = id;
             this.name = name;
-            this.location = location;
+            this.country = country;
+            this.city = city;
             this.capacity = capacity;
-            this.availabilities = new ArrayList<>();
+
+        }
+
+        private Location location;
+
+        public Location getLocation() {
+            return location;
+        }
+
+        public void setLocation(Location location) {
+            this.location = location;
         }
 
         // Getters y setters existentes
@@ -26,20 +41,12 @@ import java.util.List;
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
 
-        public Location getLocation() { return location; }
-        public void setLocation(Location location) { this.location = location; }
+        public Country getCountry() { return country; }
+        public void setCountry(Country country) { this.country = country; }
+        public City getCity() { return city; }
+        public void setCity(City city) { this.city = city; }
 
         public int getCapacity() { return capacity; }
         public void setCapacity(int capacity) { this.capacity = capacity; }
 
-        public List<Availability> getAvailabilities() { return availabilities; }
-        public void setAvailabilities(List<Availability> availabilities) { this.availabilities = availabilities; }
-
-        public void addAvailability(Availability availability) {
-            this.availabilities.add(availability);
-        }
-
-        public void removeAvailability(Availability availability) {
-            this.availabilities.remove(availability);
-        }
     }

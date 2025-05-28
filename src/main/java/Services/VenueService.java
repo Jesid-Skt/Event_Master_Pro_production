@@ -2,10 +2,8 @@ package Services;
 
 import Enums.City;
 import Enums.Country;
-import Model.EventPackage.Availability;
 import Model.EventPackage.Location;
 import Model.EventPackage.Venue;
-import java.time.LocalDateTime;
 
 import java.util.*;
 
@@ -29,30 +27,20 @@ public class VenueService {
 
         String id = UUID.randomUUID().toString().substring(0, 8);
         Location location = new Location(address, city, country);
-        Venue venue = new Venue(id, name, location, capacity);
+        Venue venue = new Venue(id, name, country, city, capacity);
         venues.put(id, venue);
 
         return id;  // Retorna el id generado para que la GUI lo muestre si quiere
     }
 
-    public void addVenueAvailability(String venueId, LocalDateTime startDate, LocalDateTime endDate) throws NoSuchElementException, IllegalArgumentException {
-        Venue venue = venues.get(venueId);
-        if (venue == null) {
-            throw new NoSuchElementException("Venue not found.");
-        }
-        if (endDate.isBefore(startDate)) {
-            throw new IllegalArgumentException("End date cannot be before start date.");
-        }
-        Availability availability = new Availability(startDate, endDate, true);
-        venue.addAvailability(availability);
-    }
 
     public void removeLocation(String venueId) throws NoSuchElementException {
         Venue venue = venues.get(venueId);
         if (venue == null) {
             throw new NoSuchElementException("Venue not found.");
         }
-        venue.setLocation(null);
+        venue.setCountry(null);
+        venue.setCity(null);
     }
 
     public void modifyLocationDetails(String venueId, String address, City city, Country country) throws NoSuchElementException {
@@ -71,57 +59,11 @@ public class VenueService {
         }
     }
 
-    public void modifyVenueAvailability(String venueId, int availabilityIndex, LocalDateTime newStartDate, LocalDateTime newEndDate) throws NoSuchElementException, IllegalArgumentException, IndexOutOfBoundsException {
-        Venue venue = venues.get(venueId);
-        if (venue == null) {
-            throw new NoSuchElementException("Venue not found.");
-        }
-
-        List<Availability> availabilities = venue.getAvailabilities();
-        if (availabilityIndex < 0 || availabilityIndex >= availabilities.size()) {
-            throw new IndexOutOfBoundsException("Invalid availability period number.");
-        }
-
-        if (newStartDate != null && newEndDate != null && newEndDate.isBefore(newStartDate)) {
-            throw new IllegalArgumentException("End date cannot be before start date.");
-        }
-
-        Availability availability = availabilities.get(availabilityIndex);
-        if (newStartDate != null) {
-            availability.setStartDate(newStartDate);
-        }
-        if (newEndDate != null) {
-            availability.setEndDate(newEndDate);
-        }
-    }
-
-    public List<Availability> getVenueAvailability(String venueId) throws NoSuchElementException {
-        Venue venue = venues.get(venueId);
-        if (venue == null) {
-            throw new NoSuchElementException("Venue not found.");
-        }
-        return Collections.unmodifiableList(venue.getAvailabilities());
-    }
-
     public void removeVenue(String venueId) throws NoSuchElementException {
         if (!venues.containsKey(venueId)) {
             throw new NoSuchElementException("Venue not found.");
         }
         venues.remove(venueId);
-    }
-
-    public void removeVenueAvailability(String venueId, int availabilityIndex) throws NoSuchElementException, IndexOutOfBoundsException {
-        Venue venue = venues.get(venueId);
-        if (venue == null) {
-            throw new NoSuchElementException("Venue not found.");
-        }
-
-        List<Availability> availabilities = venue.getAvailabilities();
-        if (availabilityIndex < 0 || availabilityIndex >= availabilities.size()) {
-            throw new IndexOutOfBoundsException("Invalid availability period number.");
-        }
-        Availability toRemove = availabilities.get(availabilityIndex);
-        venue.removeAvailability(toRemove);
     }
 
     public Venue getVenueById(String id) {
@@ -134,5 +76,9 @@ public class VenueService {
 
     public Collection<Venue> listVenues() {
         return Collections.unmodifiableCollection(venues.values());
+    }
+    public String generateUniqueVenueID() {
+        // Simple example: UUID
+        return "EVT-" + java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 }

@@ -70,15 +70,15 @@ public class GuiEvent {
             public void actionPerformed(ActionEvent e) {
 
                 // Crea una nueva instancia de la ventana principal
-                GuiFormularioCreateEvent guiFormularioCreateEvent = new GuiFormularioCreateEvent();
-                guiFormularioCreateEvent.getLabelEventID().setVisible(true);
-                guiFormularioCreateEvent.getFieldEventID().setVisible(false);
+                GuiFormularioCreateEvent formularioEvent = new GuiFormularioCreateEvent();
+                formularioEvent.getFieldEventID().setVisible(true);
 
                 JFrame frame = new JFrame("Create Event");
-                frame.setContentPane(guiFormularioCreateEvent.getPanelFolmularioCreateEvent());
+                frame.setContentPane(formularioEvent.getPanelFolmularioCreateEvent());
                 frame.pack();
                 frame.setLocationRelativeTo(null);
                 frame.setSize(500, 500);
+                formularioEvent.getFieldEventID().setEditable(false);
                 frame.setVisible(true);
             }
         });

@@ -2,6 +2,7 @@ package Ui.GuiPackageEvent.GuiPackageFormulariosEvent;
 
 import DTOS.EventDTO;
 import Enums.EventType;
+import Repository.EventRepository;
 import Services.EventService;
 import Services.VenueService;
 import Model.EventPackage.Event;
@@ -32,6 +33,7 @@ public class GuiFormularioCreateEvent {
     private JLabel formCreateEventLabel;
     private EventService eventService;
     private VenueService venueService;
+    private EventRepository eventRepository = new EventRepository(); // Repositorio para manejar eventos
     private String generatedEventID; // ID único generado para el evento
     private JComboBox<EventType> eventTypeComboBox;
 
@@ -40,11 +42,11 @@ public class GuiFormularioCreateEvent {
 
         // Instanciar servicios
         venueService = new VenueService();
-        eventService = new EventService(new VenueService(), new Repository.EventRepository());
+        eventService = new EventService(new VenueService(), new EventRepository());
 
         // Generar ID único al abrir el formulario
         generatedEventID = eventService.generateUniqueEventID();
-        LabelEventID.setText("ID: " + generatedEventID);
+        getFieldEventID().setText(generatedEventID);
 
         createEventButton.addActionListener(e -> {
             String venueID = FIeldVenueID.getText().trim();
@@ -67,9 +69,10 @@ public class GuiFormularioCreateEvent {
             EventDTO dto = new EventDTO(generatedEventID, eventName, eventType.name(), startDateTimeStr, endDateTimeStr, venueID);
 
             try {
-                Event createdEvent = eventService.createEvent(dto);
+                // Guardar el evento directamente en el repositorio
+                eventRepository.addEvent(dto);
 
-                JOptionPane.showMessageDialog(null, "Evento creado exitosamente con ID: " + createdEvent.getId());
+                JOptionPane.showMessageDialog(null, "Evento creado exitosamente con ID: " + dto.getEventId());
 
                 // Limpiar campos
                 FIeldVenueID.setText("Ingrese el ID del venue");
@@ -88,13 +91,12 @@ public class GuiFormularioCreateEvent {
 
                 // Generar nuevo ID para un posible nuevo evento
                 generatedEventID = eventService.generateUniqueEventID();
-                LabelEventID.setText("ID: " + generatedEventID);
+                getFieldEventID().setText(generatedEventID);
 
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, "Error al crear el evento: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-
         // Listeners para limpiar placeholder al hacer click
         setupPlaceholders();
     }
@@ -140,7 +142,7 @@ public class GuiFormularioCreateEvent {
     private void generateEventID() {
         // Aquí generas un ID único. Ejemplo simple usando timestamp:
         generatedEventID = "EVT-" + System.currentTimeMillis();
-        LabelEventID.setText("ID: " + generatedEventID);
+        getFieldEventID().setText(generatedEventID);
     }
 
     public JLabel getLabelEventID() {
@@ -209,18 +211,12 @@ public class GuiFormularioCreateEvent {
         FIeldVenueID.setText("Ingrese el ID del venue");
         panel3.add(FIeldVenueID, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JPanel panel4 = new JPanel();
-        panel4.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel4.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         panel4.setBackground(new Color(-15591660));
         panel4.setEnabled(false);
         panel4.setForeground(new Color(-330753));
         PanelFolmularioCreateEvent.add(panel4, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         panel4.setBorder(BorderFactory.createTitledBorder(null, "ID Event", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
-        LabelEventID = new JLabel();
-        LabelEventID.setBackground(new Color(-330753));
-        LabelEventID.setEnabled(false);
-        LabelEventID.setForeground(new Color(-16777216));
-        LabelEventID.setText("");
-        panel4.add(LabelEventID, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         FieldEventID = new JTextField();
         panel4.add(FieldEventID, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JPanel panel5 = new JPanel();

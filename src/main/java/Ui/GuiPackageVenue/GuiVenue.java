@@ -69,6 +69,7 @@ public class GuiVenue {
                 frame.setContentPane(formulario.getPanelPrincipalFormularioVenue());
                 formulario.getButtonDeleteVenue().setVisible(false);
                 formulario.getButtonModifyVenue().setVisible(false);
+                formulario.getTextFieldIDVenue().setEditable(false);
                 frame.setSize(600, 500);
                 frame.setLocationRelativeTo(null);
                 frame.setResizable(false);

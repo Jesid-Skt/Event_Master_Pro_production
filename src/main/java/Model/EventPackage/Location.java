@@ -14,6 +14,8 @@ public class Location {
         this.country = country;
     }
 
+
+
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
 

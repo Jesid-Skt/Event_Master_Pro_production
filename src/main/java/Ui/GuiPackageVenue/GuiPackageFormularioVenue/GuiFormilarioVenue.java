@@ -2,6 +2,11 @@ package Ui.GuiPackageVenue.GuiPackageFormularioVenue;
 
 import Enums.City;
 import Enums.Country;
+import Model.EventPackage.Venue;
+import Repository.EventRepository;
+import Repository.VenueRepository;
+import Services.EventService;
+import Services.VenueService;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -27,47 +32,75 @@ public class GuiFormilarioVenue {
     private JComboBox<City> comboBoxCity;
     private JPanel PanelCapavityVenue;
     private JTextField textFieldCapacity;
-    private JPanel PanelAviavilityVenue;
-    private JComboBox comboBoxAviavilityVenue;
     private JPanel PanelBotonCreateVenue;
     private JButton buttonCreateVenue;
     private JButton ButtonModifyVenue;
     private JButton ButtonDeleteVenue;
+    private EventService eventService;
+    private VenueService venueService = new VenueService();
+    private VenueRepository repository = new VenueRepository();
+    private String generatedVenueID;
 
     public GuiFormilarioVenue() {
+        eventService = new EventService(new VenueService(), new EventRepository());
+        // Genera el ID solo una vez al abrir el formulario
+        generatedVenueID = venueService.generateUniqueVenueID();
+        getTextFieldIDVenue().setText(generatedVenueID);
+
         JComboBox<City> cityComboBox = new JComboBox<>(City.values());
         JComboBox<Country> countryComboBox = new JComboBox<>(Country.values());
         comboBoxCity.setModel(cityComboBox.getModel());
         comboBoxCountry.setModel(countryComboBox.getModel());
 
-        buttonCreateVenue.addActionListener(new ActionListener() {
+       buttonCreateVenue.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String idVenue = textFieldIDVenue.getText();
                 String nameVenue = textFieldNameVenue.getText();
                 String address = textFieldAddresVenue.getText();
                 Country selectedCountry = (Country) comboBoxCountry.getSelectedItem();
                 City selectedCity = (City) comboBoxCity.getSelectedItem();
                 String capacityText = textFieldCapacity.getText();
+
                 int capacity = 0;
                 try {
                     capacity = Integer.parseInt(capacityText);
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(PanelPrincipalFormularioVenue, "La capacidad debe ser un número.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(PanelPrincipalFormularioVenue, "La capacidad debe ser un número entero.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
-                // Aquí puedes crear tu objeto VenueDTO o Venue y guardarlo usando tu servicio
-                // Venue venue = new Venue(idVenue, nameVenue, address, selectedCountry, selectedCity, capacity);
+                try {
+                    // Crea el objeto Venue (ajusta el constructor según tu implementación)
+                   // Ajusta el constructor de Venue para que acepte solo los argumentos necesarios
+                // Usa el constructor correcto según la definición de Venue
+                Venue venue = new Venue(generatedVenueID, nameVenue, selectedCountry, selectedCity, capacity);
 
-                JOptionPane.showMessageDialog(PanelPrincipalFormularioVenue,
-                        "Venue creado:\nID: " + idVenue +
-                        "\nNombre: " + nameVenue +
-                        "\nDirección: " + address +
-                        "\nPaís: " + selectedCountry +
-                        "\nCiudad: " + selectedCity +
-                        "\nCapacidad: " + capacity,
-                        "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                // Crea el VenueDTO usando los parámetros necesarios (ajusta según el constructor real de VenueDTO)
+                repository.addVenue(new DTOS.VenueDTO(generatedVenueID, nameVenue, selectedCountry + ", " + selectedCity, capacity));
+
+                    JOptionPane.showMessageDialog(PanelPrincipalFormularioVenue,
+                            "Venue creado exitosamente:\nID: " + generatedVenueID +
+                                    "\nNombre: " + nameVenue +
+                                    "\nDirección: " + address +
+                                    "\nPaís: " + selectedCountry +
+                                    "\nCiudad: " + selectedCity +
+                                    "\nCapacidad: " + capacity,
+                            "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+                    // Limpia los campos si lo deseas
+                    textFieldNameVenue.setText("");
+                    textFieldAddresVenue.setText("");
+                    textFieldCapacity.setText("");
+                    comboBoxCountry.setSelectedIndex(0);
+                    comboBoxCity.setSelectedIndex(0);
+
+                    // Genera un nuevo ID para el siguiente registro
+                    generatedVenueID = venueService.generateUniqueVenueID();
+                    getTextFieldIDVenue().setText(generatedVenueID);
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(PanelPrincipalFormularioVenue, "Error al crear el venue: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         ButtonModifyVenue.addActionListener(new ActionListener() {
@@ -97,6 +130,13 @@ public class GuiFormilarioVenue {
         });
     }
 
+    private void generateEventID() {
+        // Aquí generas un ID único. Ejemplo simple usando timestamp:
+        generatedVenueID = "EVT-" + System.currentTimeMillis();
+        getTextFieldIDVenue().setText("ID: " + generatedVenueID);
+    }
+
+
     {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
 // >>> IMPORTANT!! <<<
@@ -113,7 +153,7 @@ public class GuiFormilarioVenue {
      */
     private void $$$setupUI$$$() {
         PanelPrincipalFormularioVenue = new JPanel();
-        PanelPrincipalFormularioVenue.setLayout(new GridLayoutManager(8, 1, new Insets(0, 0, 0, 0), -1, -1));
+        PanelPrincipalFormularioVenue.setLayout(new GridLayoutManager(7, 1, new Insets(0, 0, 0, 0), -1, -1));
         PanelPrincipalFormularioVenue.setBackground(new Color(-15591660));
         PanelPrincipalFormularioVenue.setForeground(new Color(-330753));
         PanelPrincipalTituloVenue = new JPanel();
@@ -133,8 +173,7 @@ public class GuiFormilarioVenue {
         PanelPrincipalFormularioVenue.add(PanelIDVenue, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         PanelIDVenue.setBorder(BorderFactory.createTitledBorder(null, "ID Venue", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         textFieldIDVenue = new JTextField();
-        textFieldIDVenue.setBackground(new Color(-330753));
-        textFieldIDVenue.setForeground(new Color(-16777216));
+        textFieldIDVenue.setForeground(new Color(-15591660));
         PanelIDVenue.add(textFieldIDVenue, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         PanelNameVenue = new JPanel();
         PanelNameVenue.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
@@ -183,19 +222,11 @@ public class GuiFormilarioVenue {
         textFieldCapacity.setBackground(new Color(-330753));
         textFieldCapacity.setForeground(new Color(-16777216));
         PanelCapavityVenue.add(textFieldCapacity, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        PanelAviavilityVenue = new JPanel();
-        PanelAviavilityVenue.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        PanelAviavilityVenue.setBackground(new Color(-15591660));
-        PanelAviavilityVenue.setEnabled(false);
-        PanelPrincipalFormularioVenue.add(PanelAviavilityVenue, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        PanelAviavilityVenue.setBorder(BorderFactory.createTitledBorder(null, "Aviabilities", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
-        comboBoxAviavilityVenue = new JComboBox();
-        PanelAviavilityVenue.add(comboBoxAviavilityVenue, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         PanelBotonCreateVenue = new JPanel();
         PanelBotonCreateVenue.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
         PanelBotonCreateVenue.setBackground(new Color(-15591660));
         PanelBotonCreateVenue.setForeground(new Color(-330753));
-        PanelPrincipalFormularioVenue.add(PanelBotonCreateVenue, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        PanelPrincipalFormularioVenue.add(PanelBotonCreateVenue, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         buttonCreateVenue = new JButton();
         buttonCreateVenue.setBackground(new Color(-14829228));
         buttonCreateVenue.setForeground(new Color(-16777216));
@@ -211,6 +242,13 @@ public class GuiFormilarioVenue {
         ButtonModifyVenue.setForeground(new Color(-16777216));
         ButtonModifyVenue.setText("Modify Venue");
         PanelBotonCreateVenue.add(ButtonModifyVenue, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    }
+
+    /**
+     * @noinspection ALL
+     */
+    public JComponent $$$getRootComponent$$$() {
+        return PanelPrincipalFormularioVenue;
     }
 
     /**
@@ -272,14 +310,6 @@ public class GuiFormilarioVenue {
         return textFieldCapacity;
     }
 
-    public JPanel getPanelAviavilityVenue() {
-        return PanelAviavilityVenue;
-    }
-
-    public JComboBox getComboBoxAviavilityVenue() {
-        return comboBoxAviavilityVenue;
-    }
-
     public JPanel getPanelBotonCreateVenue() {
         return PanelBotonCreateVenue;
     }
@@ -295,4 +325,6 @@ public class GuiFormilarioVenue {
     public JButton getButtonDeleteVenue() {
         return ButtonDeleteVenue;
     }
+
+
 }
