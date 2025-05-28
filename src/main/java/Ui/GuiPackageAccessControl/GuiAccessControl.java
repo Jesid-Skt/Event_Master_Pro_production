@@ -2,6 +2,7 @@ package Ui.GuiPackageAccessControl;
 
 import DTOS.AttendeeDTO;
 import DTOS.EventDTO;
+import Repository.EventRepository;
 import Services.AccessControlService;
 import Services.AttendeeService;
 import Services.TicketService;
@@ -38,7 +39,7 @@ public class GuiAccessControl {
 
     public GuiAccessControl() {
         accessControlService = new AccessControlService();
-        TicketService ticketService = new TicketService();
+        TicketService ticketService = new TicketService(new EventRepository());
 
         registerNewAttendeeButton.addActionListener(new ActionListener() {
             @Override
